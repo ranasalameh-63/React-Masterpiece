@@ -8,6 +8,11 @@ const bodyParser = require("body-parser");
 
 
 
+const authRouter = require ('./Routes/authRoute')
+const addVideoRouter = require ('./Routes/addVideoRoute')
+const userRoute = require ('./Routes/userRoute')
+
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -31,6 +36,10 @@ app.use(express.urlencoded({ extended: true }));
 connectDB();
 
 // Routes
+app.use("/api/auth", authRouter);
+app.use("/api/videos", addVideoRouter);
+app.use("/api/user", userRoute);
+
 
 
 app.get("/", (req, res) => {

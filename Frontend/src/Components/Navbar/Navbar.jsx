@@ -13,6 +13,7 @@ const Navbar = () => {
     { name: "AI Assistant", href: "/ai" },
     { name: "Get in touch", href: "/contact" },
     { name: "Our story", href: "/about" },
+    { name: "Add Video", href: "/addVideoForm" },
   ];
 
   return (

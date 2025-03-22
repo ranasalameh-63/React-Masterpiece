@@ -8,18 +8,20 @@ import Categories from './Components/Categories/Categories';
 import Hirepro from './Components/Hirepro/Hirepro';
 import AI from './Components/AIHelp/AI';
 import Login from './Components/Login/Login';
+import Signup from './Components/SignUp/SignUp';
 import Profile from './Components/Profile/Profile';
 import Contact from './Components/ContactUs/Contact';
 import About from './Components/AboutUs/About';
 import Admin from './Components/AdminDashboard/AdminDash';
 import Booking from './Components/Booking/Booking'
 import ExpertPage from './Components/ExpertRegister/Expert';
+import AddVideoForm from './Components/AddVideoForm/AddVideoForm';
 
 
 // Hide Navbar & Footer from login  
 function Layout({ children }) {
   const location = useLocation();
-  const hideNavbarAndFooter = location.pathname === "/login";
+  const hideNavbarAndFooter = ["/login", "/signup"].includes(location.pathname);
 
   return (
     <div>
@@ -43,9 +45,12 @@ function App() {
           <Route path="/ai" element={<AI />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/addVideoForm" element={<AddVideoForm />} />
+
         </Routes>
       </Layout>
     </Router>
