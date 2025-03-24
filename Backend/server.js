@@ -11,8 +11,9 @@ const bodyParser = require("body-parser");
 const authRouter = require ('./Routes/authRoute')
 const addVideoRouter = require ('./Routes/addVideoRoute')
 const userRoute = require ('./Routes/userRoute')
+const expertRoute = require ('./Routes/expertRoutes')
 
-
+const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -29,17 +30,18 @@ app.use(
 );
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true })); 
-
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
 // Connect to MongoDB using connectDB function
 connectDB();
 
+
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/videos", addVideoRouter);
 app.use("/api/user", userRoute);
-
+app.use("/api/expert", expertRoute);
 
 
 app.get("/", (req, res) => {

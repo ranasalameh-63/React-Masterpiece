@@ -172,7 +172,7 @@ const Login = () => {
         setTimeout(() => navigate("/"), 1200);
       }
 
-      dispatch(setUserId({ userId: user._id, role: user.role }));
+      dispatch(setUserId({ userId: user.id, role: user.role }));
 
       const expires = new Date();
       expires.setMinutes(expires.getMinutes() + 60);

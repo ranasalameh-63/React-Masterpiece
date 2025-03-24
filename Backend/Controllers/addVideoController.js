@@ -2,14 +2,11 @@ const Video = require("../models/videosModel");
 
 const addVideo = async (req, res) => {
   try {
+    console.log("User in addVideo:", req.user);
     const { title, description, youtubeUrl, category } = req.body;
-    const youtubeId = youtubeUrl.split("v=")[1]?.split("&")[0];
     const expertId = req.user._id;
 
-    if (!youtubeId) {
-      return res.status(400).json({ message: "Invalid YouTube URL" });
-    }
-
+    
     if (!expertId) {
         return res.status(401).json({ message: "User not authenticated" });
       }
@@ -18,14 +15,15 @@ const addVideo = async (req, res) => {
       title,
       description,
       youtubeUrl,
-      youtubeId,
+      expertId,
       categories: [category],
-      thumbnail: `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg`,
+     
     });
 
     await newVideo.save();
     res.status(201).json({ message: "Video added successfully", video: newVideo });
   } catch (error) {
+    console.error("Error adding video:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
