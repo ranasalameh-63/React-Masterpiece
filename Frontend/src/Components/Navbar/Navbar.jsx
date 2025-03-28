@@ -41,7 +41,7 @@ const Navbar = () => {
               <Link
                 key={link.name}
                 to={link.href}
-                className="px-3 py-2 text-lg font-medium text-[#FFA725] transition-all"
+                className="px-3 py-2 text-l font-medium text-[#FFA725] transition-all"
               >
                 {link.name}
               </Link>

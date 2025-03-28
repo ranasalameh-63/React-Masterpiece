@@ -12,6 +12,10 @@ const authRouter = require ('./Routes/authRoute')
 const addVideoRouter = require ('./Routes/addVideoRoute')
 const userRoute = require ('./Routes/userRoute')
 const expertRoute = require ('./Routes/expertRoutes')
+const contactRoute = require ('./Routes/contactRoute')
+const paymentRoute = require ('./Routes/paymentRoute')
+
+
 
 const path = require("path");
 const app = express();
@@ -42,6 +46,9 @@ app.use("/api/auth", authRouter);
 app.use("/api/videos", addVideoRouter);
 app.use("/api/user", userRoute);
 app.use("/api/expert", expertRoute);
+app.use("/api/contact", contactRoute);
+app.use("/api/payment", paymentRoute);
+
 
 
 app.get("/", (req, res) => {

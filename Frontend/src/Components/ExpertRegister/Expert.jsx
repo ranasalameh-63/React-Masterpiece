@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useSelector } from "react-redux";
+
 
 const ExpertRegistrationForm = () => {
   const [step, setStep] = useState(1);
+  const [userData, setUserData] = useState(null);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -14,21 +18,19 @@ const ExpertRegistrationForm = () => {
       carpentry: false,
       plumbing: false,
       electrical: false,
-      painting: false,
-      tiling: false,
-      drywall: false,
-      flooring: false,
-      landscaping: false
+      painting: false
     },
-    specialties: [],
     availability: {
       weekdays: false,
       weekends: false,
       evenings: false
     },
     hourlyRate: '',
-    portfolio: []
+    profileImage: []
   });
+
+
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -61,27 +63,87 @@ const ExpertRegistrationForm = () => {
     }
   };
 
-  const handleSpecialtyChange = (e) => {
-    const value = e.target.value;
-    if (e.target.checked) {
-      setFormData({
-        ...formData,
-        specialties: [...formData.specialties, value]
-      });
-    } else {
-      setFormData({
-        ...formData,
-        specialties: formData.specialties.filter(specialty => specialty !== value)
-      });
-    }
+  
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+    return null;
   };
 
-  const handleSubmit = (e) => {
+
+  const userId = useSelector((state) => state.user.userId);
+  console.log("user ID:", userId);
+
+  useEffect(() => {
+    if (userId) {
+      axios.get(`http://localhost:7000/api/user/details/${userId}`)
+        .then((response) => {
+          console.log("User Data:", response.data);
+          setUserData(response.data);
+        })
+        .catch((error) => console.error("Error fetching user data:", error));
+    }
+  }, [userId]);
+
+  // Effect to load data from localStorage when the component is mounted
+  useEffect(() => {
+    const storedFormData = JSON.parse(localStorage.getItem('formData'));
+    if (storedFormData) {
+      setFormData(storedFormData);
+      console.log(storedFormData)
+    }
+  }, []);
+
+  // Effect to save formData to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('formData', JSON.stringify(formData));
+  }, [formData]);
+
+ 
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Here you would typically send the data to your backend
-    alert('Registration successful! We will review your application and contact you soon.');
+    const token = getCookie("token");
+    const data = new FormData();
+    data.append("userId", userId);
+    data.append("firstName", formData.firstName);
+    data.append("lastName", formData.lastName);
+    data.append("email", formData.email);
+    data.append("phone", formData.phoneNumber);
+    data.append("experience", formData.experienceYears);
+    data.append("location", formData.location);
+    data.append("bio", formData.aboutYourself);
+    data.append("hourlyRate", formData.hourlyRate);
+    // skills
+    data.append("skills", JSON.stringify(formData.skills));
+    //availability
+
+    const availability = [];
+  if (formData.availability.weekdays) availability.push("weekdays");
+  if (formData.availability.weekends) availability.push("weekends");
+  if (formData.availability.evenings) availability.push("evenings");
+
+  data.append("availability", JSON.stringify(availability));
+    // profileImage
+    formData.profileImage.forEach((file) => {
+      data.append("profileImage", file);
+    });
+  
+    try {
+      const response = await axios.post("http://localhost:7000/api/expert/add", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`, 
+        },
+      });
+  
+      console.log("Success:", response.data);
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+    }
   };
+  
 
   const nextStep = () => {
     setStep(step + 1);
@@ -96,10 +158,7 @@ const ExpertRegistrationForm = () => {
     'Tafilah', 'Ma\'an', 'Jerash', 'Ajloun', 'Aqaba', 'Mafraq'
   ];
 
-  const specialtiesList = [
-    'Kitchen Renovation', 'Bathroom Remodeling', 'Furniture Making', 
-    'Home Automation', 'Outdoor Structures', 'Emergency Repairs'
-  ];
+  
 
   const renderStep = () => {
     switch(step) {
@@ -164,7 +223,7 @@ const ExpertRegistrationForm = () => {
                   name="phone"
                   type="tel"
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
-                  value={formData.phone}
+                  value={formData.phoneNumber}
                   onChange={handleChange}
                 />
               </div>
@@ -202,7 +261,7 @@ const ExpertRegistrationForm = () => {
                   min="0"
                   required
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
-                  value={formData.experience}
+                  value={formData.experienceYears}
                   onChange={handleChange}
                 />
               </div>
@@ -218,7 +277,7 @@ const ExpertRegistrationForm = () => {
                 rows="3"
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
                 placeholder="Tell us about your experience and passion for DIY..."
-                value={formData.bio}
+                value={formData.aboutYourself}
                 onChange={handleChange}
               ></textarea>
               <p className="mt-1 text-xs text-gray-500">Brief description of your background and expertise</p>
@@ -254,32 +313,7 @@ const ExpertRegistrationForm = () => {
               </div>
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Specialties
-              </label>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                {specialtiesList.map((specialty) => (
-                  <div key={specialty} className="flex items-center">
-                    <input
-                      id={specialty.toLowerCase().replace(/\s+/g, '-')}
-                      name="specialty"
-                      type="checkbox"
-                      value={specialty}
-                      checked={formData.specialties.includes(specialty)}
-                      onChange={handleSpecialtyChange}
-                      className="h-4 w-4 text-amber-500 focus:ring-amber-500 border-gray-300 rounded"
-                    />
-                    <label 
-                      htmlFor={specialty.toLowerCase().replace(/\s+/g, '-')} 
-                      className="ml-2 block text-sm text-gray-700"
-                    >
-                      {specialty}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
+            
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -380,23 +414,13 @@ const ExpertRegistrationForm = () => {
                   <ul className="mt-1 text-sm text-gray-500">
                     <li>Name: {formData.firstName} {formData.lastName}</li>
                     <li>Email: {formData.email}</li>
-                    <li>Phone: {formData.phone || 'Not provided'}</li>
+                    <li>Phone: {formData.phoneNumber || 'Not provided'}</li>
                     <li>Location: {formData.location || 'Not selected'}</li>
-                    <li>Experience: {formData.experience} years</li>
+                    <li>Experience: {formData.experienceYears} years</li>
                   </ul>
                 </div>
                 
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Professional Details</p>
-                  <ul className="mt-1 text-sm text-gray-500">
-                    <li>Skills: {Object.entries(formData.skills)
-                      .filter(([_, value]) => value)
-                      .map(([skill]) => skill)
-                      .join(', ') || 'None selected'}</li>
-                    <li>Specialties: {formData.specialties.join(', ') || 'None selected'}</li>
-                    <li>Rate: {formData.hourlyRate ? `JD ${formData.hourlyRate}/hour` : 'Not provided'}</li>
-                  </ul>
-                </div>
+                
               </div>
             </div>
             

@@ -3,7 +3,7 @@ const path = require("path");
 
 exports.createExpert = async (req, res) => {
   try {
-    const { phoneNumber, location, experienceYears, aboutYourself, skills, specialties, availability, hourlyRate } = req.body;
+    const { phoneNumber, location, experienceYears, aboutYourself, skills, availability, hourlyRate } = req.body;
     let profileImage = req.file ? `/uploads/experts/${req.file.filename}` : null; 
 
     const expert = new Expert({
@@ -13,7 +13,6 @@ exports.createExpert = async (req, res) => {
       experienceYears,
       aboutYourself,
       skills: skills ? skills.split(",") : [],
-      specialties: specialties ? specialties.split(",") : [],
       availability: Array.isArray(availability) ? availability : availability ? [availability] : [],
       hourlyRate,
       profileImage,
@@ -23,6 +22,7 @@ exports.createExpert = async (req, res) => {
     res.status(201).json({ message: "Expert profile created successfully", expert });
   } catch (error) {
     res.status(500).json({ error: error.message });
+    console.log(error.message)
   }
 };
 

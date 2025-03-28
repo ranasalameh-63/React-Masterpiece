@@ -16,6 +16,7 @@ import Admin from './Components/AdminDashboard/AdminDash';
 import Booking from './Components/Booking/Booking'
 import ExpertPage from './Components/ExpertRegister/Expert';
 import AddVideoForm from './Components/AddVideoForm/AddVideoForm';
+import PaymentForm from './Components/Payment/PaymentForm';
 
 
 // Hide Navbar & Footer from login  
@@ -50,6 +51,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/addVideoForm" element={<AddVideoForm />} />
+          <Route path="/paymentForm" element={<PaymentForm />} />
 
         </Routes>
       </Layout>

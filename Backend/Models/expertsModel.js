@@ -7,7 +7,6 @@ const expertSchema = new mongoose.Schema({
   experienceYears: { type: Number, required: true },
   aboutYourself: { type: String },
   skills: { type: [String] },
-  specialties: { type: [String] },
   availability: {
     type: [String],
     enum: ["weekdays", "weekends", "evenings"],
