@@ -30,3 +30,8 @@ Welcome to the **DIY Home Repair Platform**! This platform empowers users to tac
 ## Trello Board
 
 [MasterTrello](https://trello.com/b/aHYfFsLT/masterpiece)
+
+---
+
+## Figma for Mockup and Wierframe
+[FigmaDesign](https://www.figma.com/design/nT9NFoqYWtMsTUKLYkH2Vq/Masterpiece?node-id=0-1&t=8qcNW13gJgayFrjf-1)
