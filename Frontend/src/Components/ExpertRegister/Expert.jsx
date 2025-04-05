@@ -1,19 +1,16 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
-
 
 const ExpertRegistrationForm = () => {
   const [step, setStep] = useState(1);
-  const [userData, setUserData] = useState(null);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
-    experience: '',
+    experienceYears: '',
     location: '',
-    bio: '',
+    aboutYourself: '',
     skills: {
       carpentry: false,
       plumbing: false,
@@ -25,127 +22,120 @@ const ExpertRegistrationForm = () => {
       weekends: false,
       evenings: false
     },
-    hourlyRate: '',
-    profileImage: []
+    profileImage: [],
+    password: '',
+    confirmPassword: '',
   });
 
-
-
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    
-    if (type === 'checkbox') {
-      if (name.startsWith('skills.')) {
-        const skill = name.split('.')[1];
-        setFormData({
-          ...formData,
-          skills: {
-            ...formData.skills,
-            [skill]: checked
-          }
-        });
-      } else if (name.startsWith('availability.')) {
-        const availType = name.split('.')[1];
-        setFormData({
-          ...formData,
-          availability: {
-            ...formData.availability,
-            [availType]: checked
-          }
-        });
+    const { name, value, type, checked, files } = e.target;
+
+    if (type === "checkbox") {
+      if (name.startsWith("skills.")) {
+        const skill = name.split(".")[1];
+        setFormData((prevState) => ({
+          ...prevState,
+          skills: { ...prevState.skills, [skill]: checked },
+        }));
+      } else if (name.startsWith("availability.")) {
+        const availType = name.split(".")[1];
+        setFormData((prevState) => ({
+          ...prevState,
+          availability: { ...prevState.availability, [availType]: checked },
+        }));
       }
+    } else if (name === "profileImage") {
+      setFormData((prevState) => ({
+        ...prevState,
+        profileImage: files[0],
+      }));
     } else {
-      setFormData({
-        ...formData,
-        [name]: value
-      });
+      setFormData((prevState) => ({ ...prevState, [name]: value }));
     }
   };
-
-  
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-    return null;
-  };
-
-
-  const userId = useSelector((state) => state.user.userId);
-  console.log("user ID:", userId);
-
-  useEffect(() => {
-    if (userId) {
-      axios.get(`http://localhost:7000/api/user/details/${userId}`)
-        .then((response) => {
-          console.log("User Data:", response.data);
-          setUserData(response.data);
-        })
-        .catch((error) => console.error("Error fetching user data:", error));
-    }
-  }, [userId]);
-
-  // Effect to load data from localStorage when the component is mounted
-  useEffect(() => {
-    const storedFormData = JSON.parse(localStorage.getItem('formData'));
-    if (storedFormData) {
-      setFormData(storedFormData);
-      console.log(storedFormData)
-    }
-  }, []);
-
-  // Effect to save formData to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem('formData', JSON.stringify(formData));
-  }, [formData]);
-
- 
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = getCookie("token");
+    if (e) e.preventDefault();
     const data = new FormData();
-    data.append("userId", userId);
     data.append("firstName", formData.firstName);
     data.append("lastName", formData.lastName);
     data.append("email", formData.email);
-    data.append("phone", formData.phoneNumber);
-    data.append("experience", formData.experienceYears);
+    data.append("phone", formData.phone);
+    data.append("experienceYears", formData.experienceYears);
     data.append("location", formData.location);
-    data.append("bio", formData.aboutYourself);
-    data.append("hourlyRate", formData.hourlyRate);
-    // skills
-    data.append("skills", JSON.stringify(formData.skills));
-    //availability
+    data.append("aboutYourself", formData.aboutYourself);
+    data.append("password", formData.password);
+    data.append("confirmPassword", formData.confirmPassword);
 
-    const availability = [];
-  if (formData.availability.weekdays) availability.push("weekdays");
-  if (formData.availability.weekends) availability.push("weekends");
-  if (formData.availability.evenings) availability.push("evenings");
+    const selectedSkills = Object.keys(formData.skills).filter(skill => formData.skills[skill]);
+    data.append("skills", JSON.stringify(selectedSkills));
 
-  data.append("availability", JSON.stringify(availability));
-    // profileImage
-    formData.profileImage.forEach((file) => {
-      data.append("profileImage", file);
-    });
-  
+    const selectedAvailability = Object.keys(formData.availability).filter(time => formData.availability[time]);
+    data.append("availability", JSON.stringify(selectedAvailability));
+
+    if (formData.profileImage) {
+      data.append("profileImage", formData.profileImage);
+    }
+
     try {
       const response = await axios.post("http://localhost:7000/api/expert/add", data, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`, 
-        },
+        }, 
+        
       });
-  
-      console.log("Success:", response.data);
+      setSuccess("Data submitted successfully!");
+      setError(""); // Clear any previous errors
     } catch (error) {
-      console.error("Error:", error.response?.data || error.message);
+      setError("Error submitting data: " + error.message);
+      setSuccess(""); // Clear any previous success messages
     }
   };
-  
 
-  const nextStep = () => {
+  const nextStep = async () => {
+    if (step === 1) {
+      const {password, phone } = formData;
+      if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || !formData.location || !formData.password || !formData.confirmPassword) {
+        setError("Please fill all required fields in Step 1.");
+        setSuccess(""); // Clear any previous success messages
+        return;
+      }
+
+      if (formData.password !== formData.confirmPassword) {
+        setError("Passwords do not match.");
+        setSuccess(""); // Clear any previous success messages
+        return;
+      }
+      const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setError("Password must be at least 8 characters long and contain at least one letter and one number.");
+      setSuccess(""); // Clear any previous success messages
+
+      return;
+    }
+
+    // تحقق من رقم الهاتف
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(phone)) {
+      setError("Phone number must be exactly 10 digits.");
+      setSuccess(""); // Clear any previous success messages
+
+      return;
+    }
+    } else if (step === 2) {
+      if (!formData.skills.carpentry && !formData.skills.plumbing && !formData.skills.electrical && !formData.skills.painting) {
+        setError("Please select at least one skill in Step 2.");
+        setSuccess(""); // Clear any previous success messages
+        return;
+      }
+
+      await handleSubmit();
+      return; // Prevent further execution
+    }
+
     setStep(step + 1);
   };
 
@@ -158,371 +148,241 @@ const ExpertRegistrationForm = () => {
     'Tafilah', 'Ma\'an', 'Jerash', 'Ajloun', 'Aqaba', 'Mafraq'
   ];
 
-  
-
-  const renderStep = () => {
-    switch(step) {
-      case 1:
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-medium text-gray-900">Personal Information</h3>
-            
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-                  First Name
-                </label>
-                <input
-                  id="firstName"
-                  name="firstName"
-                  type="text"
-                  required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                  Last Name
-                </label>
-                <input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Email Address
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                  Phone Number
-                </label>
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
-                  value={formData.phoneNumber}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div>
-                <label htmlFor="location" className="block text-sm font-medium text-gray-700">
-                  Location
-                </label>
-                <select
-                  id="location"
-                  name="location"
-                  required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
-                  value={formData.location}
-                  onChange={handleChange}
-                >
-                  <option value="" disabled>Select a governorate</option>
-                  {jordanGovernorates.map((governorate) => (
-                    <option key={governorate} value={governorate}>
-                      {governorate}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="experience" className="block text-sm font-medium text-gray-700">
-                  Years of Experience
-                </label>
-                <input
-                  id="experience"
-                  name="experience"
-                  type="number"
-                  min="0"
-                  required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
-                  value={formData.experienceYears}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-            
-            <div>
-              <label htmlFor="bio" className="block text-sm font-medium text-gray-700">
-                About Yourself
-              </label>
-              <textarea
-                id="bio"
-                name="bio"
-                rows="3"
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
-                placeholder="Tell us about your experience and passion for DIY..."
-                value={formData.aboutYourself}
-                onChange={handleChange}
-              ></textarea>
-              <p className="mt-1 text-xs text-gray-500">Brief description of your background and expertise</p>
-            </div>
-          </div>
-        );
-      
-      case 2:
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-medium text-gray-900">Skills & Expertise</h3>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Primary Skills
-              </label>
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                {Object.keys(formData.skills).map((skill) => (
-                  <div key={skill} className="flex items-center">
-                    <input
-                      id={`skills.${skill}`}
-                      name={`skills.${skill}`}
-                      type="checkbox"
-                      checked={formData.skills[skill]}
-                      onChange={handleChange}
-                      className="h-4 w-4 text-amber-500 focus:ring-amber-500 border-gray-300 rounded"
-                    />
-                    <label htmlFor={`skills.${skill}`} className="ml-2 block text-sm text-gray-700 capitalize">
-                      {skill}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Availability
-              </label>
-              <div className="grid grid-cols-3 gap-4">
-                {Object.keys(formData.availability).map((availType) => (
-                  <div key={availType} className="flex items-center">
-                    <input
-                      id={`availability.${availType}`}
-                      name={`availability.${availType}`}
-                      type="checkbox"
-                      checked={formData.availability[availType]}
-                      onChange={handleChange}
-                      className="h-4 w-4 text-amber-500 focus:ring-amber-500 border-gray-300 rounded"
-                    />
-                    <label 
-                      htmlFor={`availability.${availType}`} 
-                      className="ml-2 block text-sm text-gray-700 capitalize"
-                    >
-                      {availType}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div>
-              <label htmlFor="hourlyRate" className="block text-sm font-medium text-gray-700">
-                Hourly Rate (JOD)
-              </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-gray-500 sm:text-sm">JD</span>
-                </div>
-                <input
-                  id="hourlyRate"
-                  name="hourlyRate"
-                  type="number"
-                  min="0"
-                  step="0.5"
-                  className="pl-10 mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
-                  placeholder="25"
-                  value={formData.hourlyRate}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-          </div>
-        );
-      
-      case 3:
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-medium text-gray-900">Portfolio & Final Steps</h3>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Upload Personal image
-              </label>
-              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                <div className="space-y-1 text-center">
-                  <svg
-                    className="mx-auto h-12 w-12 text-gray-400"
-                    stroke="currentColor"
-                    fill="none"
-                    viewBox="0 0 48 48"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                  <div className="flex text-sm text-gray-600">
-                    <label
-                      htmlFor="file-upload"
-                      className="relative cursor-pointer bg-white rounded-md font-medium text-amber-600 hover:text-amber-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-amber-500"
-                    >
-                      <span>Upload files</span>
-                      <input id="file-upload" name="file-upload" type="file" className="sr-only" multiple />
-                    </label>
-                    <p className="pl-1">or drag and drop</p>
-                  </div>
-                  <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="border border-gray-200 rounded-md p-4 bg-gray-50">
-              <h4 className="text-base font-medium text-gray-800 mb-3">Review Your Information</h4>
-              
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Personal Details</p>
-                  <ul className="mt-1 text-sm text-gray-500">
-                    <li>Name: {formData.firstName} {formData.lastName}</li>
-                    <li>Email: {formData.email}</li>
-                    <li>Phone: {formData.phoneNumber || 'Not provided'}</li>
-                    <li>Location: {formData.location || 'Not selected'}</li>
-                    <li>Experience: {formData.experienceYears} years</li>
-                  </ul>
-                </div>
-                
-                
-              </div>
-            </div>
-            
-            <div className="flex items-center">
-              <input
-                id="terms"
-                name="terms"
-                type="checkbox"
-                className="h-4 w-4 text-amber-500 focus:ring-amber-500 border-gray-300 rounded"
-              />
-              <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
-                I agree to the <a href="#" className="text-amber-600 hover:underline">terms and conditions</a> and <a href="#" className="text-amber-600 hover:underline">privacy policy</a>
-              </label>
-            </div>
-          </div>
-        );
-        
-      default:
-        return null;
-    }
-  };
-
-  const renderProgressBar = () => {
-    return (
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          {[1, 2, 3].map((stepNumber) => (
-            <div key={stepNumber} className="flex flex-col items-center">
-              <div 
-                className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                  step >= stepNumber ? 'bg-amber-500 text-white' : 'bg-gray-200 text-gray-500'
-                }`}
-              >
-                {stepNumber}
-              </div>
-              <span className="text-xs mt-1 text-gray-500">
-                {stepNumber === 1 ? 'Personal' : 
-                 stepNumber === 2 ? 'Skills' : 'Portfolio'}
-              </span>
-            </div>
-          ))}
-        </div>
-        <div className="mt-2 grid grid-cols-2 gap-2">
-          <div className={`h-1 ${step >= 2 ? 'bg-amber-500' : 'bg-gray-200'}`}></div>
-          <div className={`h-1 ${step >= 3 ? 'bg-amber-500' : 'bg-gray-200'}`}></div>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl w-full bg-white rounded-xl shadow-xl overflow-hidden">
-        <div className="bg-gradient-to-r from-amber-500 to-orange-600 py-6">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-white tracking-wide">
-              DIY Expert Registration
-            </h2>
-            <p className="mt-2 text-white">Share your skills with homeowners in Jordan</p>
-          </div>
-        </div>
-        
-        <form className="px-8 py-8" onSubmit={handleSubmit}>
-          {renderProgressBar()}
-          {renderStep()}
-          
-          <div className="mt-8 flex justify-between">
+        <form className="px-8 py-8" onSubmit={handleSubmit} style={{ minWidth: '500px' }}>
+          {/* Step 1 */}
+          {step === 1 && (
+            <div className="space-y-6">
+              <h3 className="text-lg font-medium text-gray-900">Personal Information</h3>
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div>
+                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name</label>
+                  <input
+                    id="firstName"
+                    name="firstName"
+                    type="text"
+                    required
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name</label>
+                  <input
+                    id="lastName"
+                    name="lastName"
+                    type="text"
+                    required
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
+                    value={formData.email}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
+                    value={formData.phone}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div>
+                  <label htmlFor="location" className="block text-sm font-medium text-gray-700">Location</label>
+                  <select
+                    id="location"
+                    name="location"
+                    required
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
+                    value={formData.location}
+                    onChange={handleChange}
+                  >
+                    <option value="" disabled>Select a governorate</option>
+                    {jordanGovernorates.map((governorate) => (
+                      <option key={governorate} value={governorate}>
+                        {governorate}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label htmlFor="experienceYears" className="block text-sm font-medium text-gray-700">Years of Experience</label>
+                  <input
+                    id="experienceYears"
+                    name="experienceYears"
+                    type="number"
+                    min="0"
+                    required
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
+                    value={formData.experienceYears}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password</label>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  required
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Step 2 */}
+          {step === 2 && (
+            <div className="space-y-6">
+              <h3 className="text-lg font-medium text-gray-900">Skills & Expertise</h3>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Primary Skills</label>
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+                  {Object.keys(formData.skills).map((skill) => (
+                    <div key={skill} className="flex items-center">
+                      <input
+                        id={`skills.${skill}`}
+                        name={`skills.${skill}`}
+                        type="checkbox"
+                        checked={formData.skills[skill]}
+                        onChange={handleChange}
+                        className="h-4 w-4 text-amber-500 focus:ring-amber-500 border-gray-300 rounded"
+                      />
+                      <label htmlFor={`skills.${skill}`} className="ml-2 block text-sm text-gray-700 capitalize">
+                        {skill}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Availability</label>
+                <div className="grid grid-cols-3 gap-4">
+                  {Object.keys(formData.availability).map((availType) => (
+                    <div key={availType} className="flex items-center">
+                      <input
+                        id={`availability.${availType}`}
+                        name={`availability.${availType}`}
+                        type="checkbox"
+                        checked={formData.availability[availType]}
+                        onChange={handleChange}
+                        className="h-4 w-4 text-amber-500 focus:ring-amber-500 border-gray-300 rounded"
+                      />
+                      <label htmlFor={`availability.${availType}`} className="ml-2 block text-sm text-gray-700 capitalize">
+                        {availType}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="aboutYourself" className="block text-sm font-medium text-gray-700">Tell Me about Yourself</label>
+                <input
+                  id="aboutYourself"
+                  name="aboutYourself"
+                  type="text"
+                  required
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring focus:ring-amber-500 focus:border-amber-500"
+                  value={formData.aboutYourself}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="space-y-6">
+                <h3 className="text-lg font-medium text-gray-900">Upload Profile Image</h3>
+                <div className="flex justify-center items-center">
+                  <label htmlFor="profileImage" className="cursor-pointer relative">
+                    <div className="w-24 h-24 rounded-full border-2 border-dashed border-gray-300 flex justify-center items-center">
+                      {!formData.profileImage ? (
+                        <span className="text-gray-500 text-3xl">+</span>
+                      ) : (
+                        <img
+                          src={formData.profileImage}
+                          alt="profile"
+                          className="w-full h-full object-cover rounded-full"
+                        />
+                      )}
+                    </div>
+                    <input
+                      type="file"
+                      name="profileImage"
+                      id="profileImage"
+                      accept="image/*"
+                      onChange={handleChange}
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Error and Success Messages */}
+          {error && <div className="text-red-500">{error}</div>}
+          {success && <div className="text-green-500">{success}</div>}
+
+          {/* Navigation buttons */}
+          <div className="flex justify-between mt-6">
             {step > 1 && (
               <button
                 type="button"
                 onClick={prevStep}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
+                className="px-6 py-2 rounded-md bg-gray-300 text-gray-700"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="-ml-1 mr-2 h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                Back
+                Previous
               </button>
             )}
-            
-            {step < 3 ? (
-              <button
-                type="button"
-                onClick={nextStep}
-                className={`${step > 1 ? '' : 'ml-auto'} inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500`}
-              >
-                Next
-                <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 -mr-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            ) : (
-              <button
-                type="submit"
-                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                Complete Registration
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={nextStep}
+              className="px-6 py-2 rounded-md  bg-amber-600 hover:bg-amber-700 text-white"
+            >
+              {step === 2 ? "Submit" : "Next"}
+            </button>
           </div>
         </form>
       </div>

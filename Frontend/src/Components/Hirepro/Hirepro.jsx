@@ -1,51 +1,72 @@
-import React from 'react';
-import Assistant from '../Assets/assis.png'
+import React, { useState, useEffect } from 'react';
+import Assistant from '../Assets/assis.png';
+import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 const Hirepro = () => {
-  const professionals = [
-    {
-      name: "Ahmad sarrawi",
-      location: "Irbid",
-      occupation: "Electrician expert",
-      experience: "+7 Years of experience",
-      href: "booking"
-    },
-    {
-      name: "Majd altelawy",
-      location: "Amman",
-      occupation: "Carpenter",
-      experience: "+3 Years of experience",
-      href: "#"
-    },
-    {
-      name: "Samer alali",
-      location: "Amman",
-      occupation: "Machinist",
-      experience: "+8 Years of experience",
-      href: "#"
-    },
-    {
-      name: "Ala'a Issa",
-      location: "Zarqa",
-      occupation: "Painter",
-      experience: "+6 Years of experience",
-      href: "#"
-    },
-    {
-      name: "Baha'a almasri",
-      location: "Ma'an",
-      occupation: "Electrician expert",
-      experience: "+9 Years of experience",
-      href: "#"
-    },
-    {
-      name: "Omar azzam",
-      location: "Zarqa",
-      occupation: "Electrician expert",
-      experience: "+1 Years of experience",
-      href: "#"
-    }
-  ];
+  const [experts, setExperts] = useState([]);
+  const [search, setSearch] = useState("");
+  const [selectedSkill, setSelectedSkill] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+
+  const handleClick = (id) => {
+    navigate(`/booking/${id}`);
+  };
+
+
+  const skills = ["Electrician", "Plumber", "Carpenter", "Painter"];
+
+  // جلب الخبراء مع التصفية والبحث
+  useEffect(() => {
+    const fetchExperts = async () => {
+      try {
+        const response = await axios.get('http://localhost:7000/api/expert/all', {
+          params: {
+            search: search,
+            skills: selectedSkill,
+            page: page,
+            limit: 12,
+          },
+        });
+
+        setExperts(response.data.data);
+        setTotalPages(response.data.totalPages);
+        setLoading(false);
+      } catch (error) {
+        setError("Error fetching data: " + error.message);
+        setLoading(false);
+      }
+    };
+
+    fetchExperts();
+  }, [search, selectedSkill, page]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    setPage(1);
+  };
+
+  const handleFilterChange = (e) => {
+    setSelectedSkill(e.target.value);
+    setPage(1);
+  };
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -66,24 +87,40 @@ const Hirepro = () => {
                 Fast, reliable, and stress-free – let's get your home back in top shape!
               </p>
 
+              {/* Search and Filter Section */}
               <div className="bg-white rounded-lg shadow-lg p-4 mb-8">
                 <div className="flex flex-col md:flex-row gap-3">
+                  {/* Search Input */}
                   <div className="md:w-2/5">
                     <input
                       type="text"
                       placeholder="Search"
+                      value={search}
+                      onChange={handleSearchChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA725] focus:border-transparent"
                     />
                   </div>
+
+                  {/* Skill Filter */}
                   <div className="md:w-2/5">
-                    <select className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#FFA725] focus:border-transparent">
-                      <option>Electrician expert</option>
-                      <option>Plumber</option>
-                      <option>Carpenter</option>
-                      <option>Painter</option>
+                    <select
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#FFA725] focus:border-transparent"
+                      value={selectedSkill}
+                      onChange={handleFilterChange}
+                    >
+                      <option value="">Select a skill</option>
+                      {skills.map((skill) => (
+                        <option key={skill} value={skill}>
+                          {skill} expert
+                        </option>
+                      ))}
                     </select>
                   </div>
-                  <button className="md:w-1/5 bg-[#FFA725] hover:bg-[#E89620] text-white font-semibold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105">
+
+                  <button
+                    className="md:w-1/5 bg-[#FFA725] hover:bg-[#E89620] text-white font-semibold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
+                    onClick={() => fetchExperts()}
+                  >
                     Search
                   </button>
                 </div>
@@ -98,7 +135,6 @@ const Hirepro = () => {
                 />
               </div>
             </div>
-
           </div>
         </div>
       </section>
@@ -114,37 +150,60 @@ const Hirepro = () => {
             </p>
           </div>
 
+          {/* Experts Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {professionals.map((professional, index) => (
+            {experts.map((expert, index) => (
               <div
                 key={index}
                 className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
               >
                 <div className="p-6">
                   <div className="w-16 h-16 rounded-full bg-[#FFA725] bg-opacity-20 flex items-center justify-center mb-4 mx-auto">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zm-4 7a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
+                    <img
+                      src={
+                        expert.profileImage
+                          ? `http://localhost:7000${expert.profileImage}`
+                          : "/images/default-news.jpg"
+                      }
+                      alt="hello"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800 text-center mb-2">{professional.name}</h3>
+                  <h3 className="text-xl font-bold text-gray-800 text-center mb-2">{expert.userId?.fullName}</h3>
                   <div className="flex items-center justify-center text-gray-600 mb-1">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-[#FFA725]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    {professional.location}
+                    {expert.location}
                   </div>
-                  <div className="text-center text-[#FFA725] font-medium mb-1">{professional.occupation}</div>
-                  <div className="text-center text-gray-600 text-sm mb-4">{professional.experience}</div>
+                  <div className="text-center text-[#FFA725] font-medium mb-1">{expert.skills.join(', ')}</div>
+                  <div className="text-center text-gray-600 text-sm mb-4">+{expert.experienceYears} Years of Experience</div>
                   <div className="border-t border-gray-200 my-4"></div>
-                  <a
-                    href={professional.href}
-                    className="block w-full text-center bg-white border-2 border-[#FFA725] text-[#FFA725] hover:bg-[#FFA725] hover:text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
+                  <div
+                    onClick={() => {
+                      handleClick(expert._id);
+                    }}
+                    className="block w-full cursor-pointer text-center bg-white border-2 border-[#FFA725] text-[#FFA725] hover:bg-[#FFA725] hover:text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
                   >
                     Book now
-                  </a>
+                  </div>
+
                 </div>
               </div>
+            ))}
+          </div>
+
+          {/* Pagination */}
+          <div className="flex justify-center mt-8">
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index}
+                onClick={() => handlePageChange(index + 1)}
+                className={`mx-2 px-4 py-2 cursor-pointer rounded-lg ${page === index + 1 ? "bg-[#FFA725] text-white" : "bg-[#FFA725] text-white"}`}
+              >
+                {index + 1}
+              </button>
             ))}
           </div>
         </div>

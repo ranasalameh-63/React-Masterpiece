@@ -14,7 +14,8 @@ const userRoute = require ('./Routes/userRoute')
 const expertRoute = require ('./Routes/expertRoutes')
 const contactRoute = require ('./Routes/contactRoute')
 const paymentRoute = require ('./Routes/paymentRoute')
-
+const bookingRoute = require ('./Routes/bookingRoute')
+const voucherRoute = require ('./Routes/voucherRoute')
 
 
 const path = require("path");
@@ -34,8 +35,7 @@ app.use(
 );
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true })); 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Connect to MongoDB using connectDB function
 connectDB();
@@ -48,6 +48,8 @@ app.use("/api/user", userRoute);
 app.use("/api/expert", expertRoute);
 app.use("/api/contact", contactRoute);
 app.use("/api/payment", paymentRoute);
+app.use("/api/booking", bookingRoute);
+app.use("/api/voucher", voucherRoute);
 
 
 

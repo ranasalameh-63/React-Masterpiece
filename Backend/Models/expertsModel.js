@@ -12,10 +12,9 @@ const expertSchema = new mongoose.Schema({
     enum: ["weekdays", "weekends", "evenings"],
     default: [],
   },
-  hourlyRate: { type: Number, required: true },
   profileImage: { type: String },
   createdAt: { type: Date, default: Date.now },
 });
 
-const Expert = mongoose.model("Experts", expertSchema);
+const Expert = mongoose.model("Expert", expertSchema);
 module.exports = Expert;

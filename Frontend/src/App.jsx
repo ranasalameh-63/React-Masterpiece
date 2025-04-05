@@ -17,7 +17,7 @@ import Booking from './Components/Booking/Booking'
 import ExpertPage from './Components/ExpertRegister/Expert';
 import AddVideoForm from './Components/AddVideoForm/AddVideoForm';
 import PaymentForm from './Components/Payment/PaymentForm';
-
+import CreateVoucher from './Components/CreateVoucher/CreateVoucher'
 
 // Hide Navbar & Footer from login  
 function Layout({ children }) {
@@ -42,7 +42,7 @@ function App() {
           <Route path="expertPage" element={<ExpertPage />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/hirepro" element={<Hirepro />} />
-          <Route path="/booking" element={<Booking />} />
+          <Route path="/booking/:id" element={<Booking />} />
           <Route path="/ai" element={<AI />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/login" element={<Login />} />
@@ -52,7 +52,7 @@ function App() {
           <Route path="/admin" element={<Admin />} />
           <Route path="/addVideoForm" element={<AddVideoForm />} />
           <Route path="/paymentForm" element={<PaymentForm />} />
-
+          <Route path="createVoucher/:bookId" element={<CreateVoucher />} />
         </Routes>
       </Layout>
     </Router>

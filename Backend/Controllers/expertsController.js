@@ -1,51 +1,165 @@
-const Expert = require("../Models/expertsModel");
-const path = require("path");
+const bcrypt = require('bcryptjs');
+const User = require('../Models/usersModel');
+const Expert = require('../Models/expertsModel');
+const path = require('path');
+const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
 exports.createExpert = async (req, res) => {
   try {
-    const { phoneNumber, location, experienceYears, aboutYourself, skills, availability, hourlyRate } = req.body;
-    let profileImage = req.file ? `/uploads/experts/${req.file.filename}` : null; 
+    const { firstName, lastName, email, phone, experienceYears, location, aboutYourself, password} = req.body;
+
+    const skills = req.body.skills ? JSON.parse(req.body.skills) : [];
+    const availability = req.body.availability ? JSON.parse(req.body.availability) : [];
+    
+    const profileImagePath = req.file ? `/uploads/${req.file.filename}` : null;
+
+    console.log("Received files:", req.file);
+    console.log("Received body:", req.body);
+
+    
+    if (!email) {
+      return res.status(400).json({ message: "Email is required." });
+    }
+    
+    if (!password) {
+      return res.status(400).json({ message: "Password is required." });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email is already in use. Please use another one." });
+    }
+
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({ message: "Password must be at least 8 characters long and contain at least one letter and one number." });
+    }
+
+    const phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(phone)) {
+      return res.status(400).json({ message: "Phone number must be exactly 10 digits." });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new User({
+      fullName: `${firstName} ${lastName}`,
+      email,
+      password: hashedPassword,
+    });
+
+    await user.save();
+
+    const token = jwt.sign(
+      { userId: user._id, email: user.email }, 
+      process.env.JWT_SECRET, 
+      { expiresIn: "7d" }
+    );
 
     const expert = new Expert({
-      userId: req.user.id,
-      phoneNumber,
+      userId: user._id, 
+      phoneNumber: phone,
       location,
+      skills,
       experienceYears,
       aboutYourself,
-      skills: skills ? skills.split(",") : [],
-      availability: Array.isArray(availability) ? availability : availability ? [availability] : [],
-      hourlyRate,
-      profileImage,
+      availability: availability, 
+      profileImage: profileImagePath,
     });
 
     await expert.save();
-    res.status(201).json({ message: "Expert profile created successfully", expert });
+
+    res.status(201).json({ message: "User and Expert created successfully", expert, token });
+    console.log(token)
   } catch (error) {
-    res.status(500).json({ error: error.message });
-    console.log(error.message)
+    console.error("Error creating user and expert:", error);
+    res.status(500).json({ message: "Error creating user and expert", error });
   }
 };
 
 
-
 exports.getAllExperts = async (req, res) => {
-    try {
-      const experts = await Expert.find().populate("userId", "firstName lastName email"); 
-      res.status(200).json(experts);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+  try {
+    const { page = 1, limit = 10, search, skills, location } = req.query;
+
+    const skip = (page - 1) * limit;  
+
+    const filter = {};
+
+    if (search) {
+      filter["userId.fullName"] = { $regex: search, $options: "i" }; 
     }
-  };
+
+    if (skills) {
+      filter.skills = { $in: skills.split(",") };  
+    }
+
+    if (location) {
+      filter.location = { $regex: location, $options: "i" }; 
+    }
+
+    const experts = await Expert.find(filter)
+      .populate("userId", "fullName email")
+      .select("userId location experienceYears skills profileImage")
+      .skip(skip) 
+      .limit(parseInt(limit)); 
+
+    const totalExperts = await Expert.countDocuments(filter);
+
+    const totalPages = Math.ceil(totalExperts / limit);
+
+    res.status(200).json({
+      data: experts,
+      totalExperts,
+      totalPages,
+      currentPage: page,
+      perPage: limit,
+    });
+  } catch (error) {
+    console.error("Error fetching experts:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
   
 
 
+exports.getExpertById = async (req, res) => {
+  try {
+    const { id } = req.params; 
 
-  exports.getExpertById = async (req, res) => {
-    try {
-      const expert = await Expert.findById(req.params.id).populate("userId", "firstName lastName email");
-      if (!expert) return res.status(404).json({ message: "Expert not found" });
-      res.status(200).json(expert);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      console.log("Invalid ObjectId format:", id);
+      return res.status(400).json({ message: "Invalid user ID format" });
     }
-  };
+
+    const expert = await Expert.findOne({ _id: id })
+      .populate("userId", "fullName email role") 
+      .select("userId location experienceYears skills profileImage"); 
+
+    if (!expert) {
+      console.error("Expert not found for user id:", id);
+      return res.status(404).json({ message: "Expert not found" });
+    }
+
+    res.status(200).json({
+      expertData: {
+        expertId:expert._id,
+        fullName: expert.userId.fullName,
+        location: expert.location,
+        experienceYears: expert.experienceYears,
+        skills: expert.skills,
+        profileImage: expert.profileImage,
+      }
+    });
+
+  } catch (error) {
+    console.error("Error occurred during expert lookup:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+  
