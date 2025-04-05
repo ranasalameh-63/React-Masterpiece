@@ -24,3 +24,9 @@ Welcome to the **DIY Home Repair Platform**! This platform empowers users to tac
 ✨ Database: MongoDB
 
 ✨ AI Integration: OpenAI API
+
+---
+
+## Trello Board
+
+[MasterTrello](https://trello.com/b/aHYfFsLT/masterpiece)
