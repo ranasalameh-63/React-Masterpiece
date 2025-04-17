@@ -11,7 +11,7 @@ function Home() {
    <Hero/>
    <MostViewed/>
    <About/>
-   <Testimonial/>
+   {/* <Testimonial/> */}
    <Statistics/>
    <ApplyAsAssiss/>
    </>

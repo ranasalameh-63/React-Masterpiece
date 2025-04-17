@@ -35,7 +35,7 @@ function Hero() {
 
                     {/* CTA Button */}
                     <button className="overflow-hidden mt-[30px] relative w-52 p-2 h-10 bg-[#FFA725] text-white border-none rounded-md text-md font-bold cursor-pointer relative z-10 group">
-                        <Link to="/find-expert">
+                        <Link to="/hirepro">
                             Find an Expert
                             <span className="absolute w-36 h-32 -top-8 -right-2 bg-white rotate-8 transform scale-x-0 group-hover:scale-x-200 transition-transform group-hover:duration-500 duration-1000 origin-right"></span>
                             <span className="absolute w-36 h-32 -top-8 -right-2 bg-[#FFA725] rotate-8 transform scale-x-0 group-hover:scale-x-200 transition-transform group-hover:duration-700 duration-700 origin-right"></span>

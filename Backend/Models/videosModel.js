@@ -4,6 +4,7 @@ const videoSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String },
   youtubeUrl: { type: String, required: true },
+  thumbnailUrl: { type: String },
   expertId: { type: mongoose.Schema.Types.ObjectId, ref: "Expert", required: true },
   categories: [{ type: String, required: true }],
   tags: [{ type: String }],

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Assistant from '../Assets/assis.png';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import Loader from '../Loader/Loader';
+
 
 const Hirepro = () => {
   const [experts, setExperts] = useState([]);
@@ -21,7 +23,6 @@ const Hirepro = () => {
 
   const skills = ["Electrician", "Plumber", "Carpenter", "Painter"];
 
-  // جلب الخبراء مع التصفية والبحث
   useEffect(() => {
     const fetchExperts = async () => {
       try {
@@ -47,7 +48,7 @@ const Hirepro = () => {
   }, [search, selectedSkill, page]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   if (error) {

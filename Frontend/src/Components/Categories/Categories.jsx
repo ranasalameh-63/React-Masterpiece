@@ -41,7 +41,7 @@ const Categories = () => {
           <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 hover:shadow-xl hover:-translate-y-2">
             <div className="h-48 overflow-hidden">
               <img
-                src={Card1}
+                src="https://images.pexels.com/photos/21812146/pexels-photo-21812146/free-photo-of-electrician-in-helmet-working-with-cables.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
                 alt="Electrical repairs"
                 className="w-full h-full object-cover"
               />
@@ -49,12 +49,13 @@ const Categories = () => {
             <div className="p-6">
               <h3 className="text-xl font-bold text-gray-800 mb-2">Electrical</h3>
               <p className="text-gray-600 mb-4">Fix wiring issues, outlets, and lighting problems with our expert tutorials.</p>
-              <a
-                href="#"
+              <Link
+                to={`/category/Electrical`}
                 className="inline-block py-2 px-4 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition duration-300"
               >
                 All Videos
-              </a>
+              </Link>
+
             </div>
           </div>
 
@@ -62,7 +63,7 @@ const Categories = () => {
           <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 hover:shadow-xl hover:-translate-y-2">
             <div className="h-48 overflow-hidden">
               <img
-                src={Card2}
+                src="https://i.pinimg.com/736x/a4/ec/b4/a4ecb4f713272ef6b592cc16348b8621.jpg"
                 alt="Plumbing repairs"
                 className="w-full h-full object-cover"
               />
@@ -70,12 +71,13 @@ const Categories = () => {
             <div className="p-6">
               <h3 className="text-xl font-bold text-gray-800 mb-2">Plumbing</h3>
               <p className="text-gray-600 mb-4">Repair leaks, pipes, and bathroom fixtures with step-by-step guidance.</p>
-              <a
-                href="#"
+              <Link
+                to={`/category/Plumbing`}
                 className="inline-block py-2 px-4 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition duration-300"
               >
                 All Videos
-              </a>
+              </Link>
+
             </div>
           </div>
 
@@ -83,7 +85,7 @@ const Categories = () => {
           <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 hover:shadow-xl hover:-translate-y-2">
             <div className="h-48 overflow-hidden">
               <img
-                src={Card3}
+                src="https://images.pexels.com/photos/5089149/pexels-photo-5089149.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
                 alt="Carpentry repairs"
                 className="w-full h-full object-cover"
               />
@@ -91,12 +93,13 @@ const Categories = () => {
             <div className="p-6">
               <h3 className="text-xl font-bold text-gray-800 mb-2">Carpentry</h3>
               <p className="text-gray-600 mb-4">Handle wood repairs, furniture fixes, and installations like a pro.</p>
-              <a
-                href="carpentry.html"
+              <Link
+                to={`/category/Carpentry`}
                 className="inline-block py-2 px-4 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition duration-300"
               >
                 All Videos
-              </a>
+              </Link>
+
             </div>
           </div>
 
@@ -104,7 +107,7 @@ const Categories = () => {
           <div className="bg-white rounded-xl shadow-lg overflow-hidden transition-transform duration-300 hover:shadow-xl hover:-translate-y-2">
             <div className="h-48 overflow-hidden">
               <img
-                src={Card4}
+                src="https://images.pexels.com/photos/6474483/pexels-photo-6474483.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load"
                 alt="Painting tutorials"
                 className="w-full h-full object-cover"
               />
@@ -112,12 +115,13 @@ const Categories = () => {
             <div className="p-6">
               <h3 className="text-xl font-bold text-gray-800 mb-2">Painting</h3>
               <p className="text-gray-600 mb-4">Learn to paint walls, touch up, and refresh surfaces with perfect results.</p>
-              <a
-                href="#"
+              <Link
+                to={`/category/Painting`}
                 className="inline-block py-2 px-4 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-medium transition duration-300"
               >
                 All Videos
-              </a>
+              </Link>
+
             </div>
           </div>
         </div>

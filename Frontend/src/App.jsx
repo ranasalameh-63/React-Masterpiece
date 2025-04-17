@@ -18,7 +18,7 @@ import ExpertPage from './Components/ExpertRegister/Expert';
 import AddVideoForm from './Components/AddVideoForm/AddVideoForm';
 import PaymentForm from './Components/Payment/PaymentForm';
 import CreateVoucher from './Components/CreateVoucher/CreateVoucher'
-
+import CategoryVideos from './Components/Categories/CategoryVideos'
 // Hide Navbar & Footer from login  
 function Layout({ children }) {
   const location = useLocation();
@@ -39,8 +39,9 @@ function App() {
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="expertPage" element={<ExpertPage />} />
+          <Route path="/expertPage" element={<ExpertPage />} />
           <Route path="/categories" element={<Categories />} />
+          <Route path="/category/:categoryName" element={<CategoryVideos />} />
           <Route path="/hirepro" element={<Hirepro />} />
           <Route path="/booking/:id" element={<Booking />} />
           <Route path="/ai" element={<AI />} />
