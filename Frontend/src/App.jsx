@@ -9,7 +9,8 @@ import Hirepro from './Components/Hirepro/Hirepro';
 import AI from './Components/AIHelp/AI';
 import Login from './Components/Login/Login';
 import Signup from './Components/SignUp/SignUp';
-import Profile from './Components/Profile/Profile';
+import UserProfile from './Components/Profile/UserProfile';
+import ExpertProfile from './Components/Profile/ExpertProfile';
 import Contact from './Components/ContactUs/Contact';
 import About from './Components/AboutUs/About';
 import Admin from './Components/AdminDashboard/AdminDash';
@@ -19,6 +20,9 @@ import AddVideoForm from './Components/AddVideoForm/AddVideoForm';
 import PaymentForm from './Components/Payment/PaymentForm';
 import CreateVoucher from './Components/CreateVoucher/CreateVoucher'
 import CategoryVideos from './Components/Categories/CategoryVideos'
+
+
+
 // Hide Navbar & Footer from login  
 function Layout({ children }) {
   const location = useLocation();
@@ -45,7 +49,10 @@ function App() {
           <Route path="/hirepro" element={<Hirepro />} />
           <Route path="/booking/:id" element={<Booking />} />
           <Route path="/ai" element={<AI />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/userProfile" element={<UserProfile />} />
+          {/* <Route path="/expertProfile" element={<ExpertProfile />} /> */}
+          <Route path="/expertProfile/:id" element={<ExpertProfile />} />
+
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/contact" element={<Contact />} />

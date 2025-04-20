@@ -46,7 +46,7 @@ exports.getBookings = async (req, res) => {
   try {
     const bookings = await Booking.find()
       .populate('userId', 'name email') 
-      .populate('expertId', 'name specialization'); 
+      .populate('expertId', 'name skills'); 
 
     res.status(200).json(bookings);
   } catch (error) {

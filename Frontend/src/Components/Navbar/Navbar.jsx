@@ -49,7 +49,7 @@ const Navbar = () => {
   const handleLogout = () => {
     deleteCookie("token");
     navigate("/login");
-    window.location.reload(); // optional: to refresh state from Redux
+    window.location.reload();
   };
 
   const defaultLinks = [
@@ -71,6 +71,18 @@ const Navbar = () => {
   if (userRole === "user") {
     roleBasedLinks.push({ name: "Join Us", href: "/expertPage" });
   }
+
+  useEffect(() => {
+    if (location.pathname === "/login" && userRole) {
+      if (userRole === "expert") {
+        navigate("/expertProfile");
+      } else {
+        navigate("/userProfile");
+      }
+    }
+  }, [userRole, navigate, location.pathname]);
+  
+
 
   const navLinks = [...defaultLinks, ...roleBasedLinks];
   const isActive = (path) => location.pathname === path;
@@ -98,8 +110,8 @@ const Navbar = () => {
                 key={link.name}
                 to={link.href}
                 className={`px-2 py-1 text-s font-medium transition-colors ${isActive(link.href)
-                    ? 'text-[#FFA725] border-b-2 border-[#FFA725]'
-                    : 'text-[#FFA725] hover:text-black'
+                  ? 'text-[#FFA725] border-b-2 border-[#FFA725]'
+                  : 'text-[#FFA725] hover:text-black'
                   }`}
               >
                 {link.name}
@@ -123,12 +135,13 @@ const Navbar = () => {
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-md z-10">
                     <Link
-                      to="/profile"
-                      className="block px-4 py-2 text-sm text-[#FFA725] hover:bg-gray-100 hover:text-black"
+                        to={userRole === "expert" ? `/expertProfile/${userId}` : "/userProfile"}
+                        className="block px-4 py-2 text-sm text-[#FFA725] hover:bg-gray-100 hover:text-black"
                       onClick={() => setDropdownOpen(false)}
                     >
                       Profile
                     </Link>
+
                     <Link
                       to="/about"
                       className="block px-4 py-2 text-sm text-[#FFA725] hover:bg-gray-100 hover:text-black"
@@ -168,8 +181,8 @@ const Navbar = () => {
                 key={link.name}
                 to={link.href}
                 className={`block py-2 px-3 text-base font-medium rounded-md ${isActive(link.href)
-                    ? 'text-[#FFA725] bg-gray-100'
-                    : 'text-[#FFA725] hover:bg-gray-100 hover:text-black'
+                  ? 'text-[#FFA725] bg-gray-100'
+                  : 'text-[#FFA725] hover:bg-gray-100 hover:text-black'
                   }`}
                 onClick={() => setMenuOpen(false)}
               >
@@ -192,12 +205,13 @@ const Navbar = () => {
                   {dropdownOpen && (
                     <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-md z-10">
                       <Link
-                        to="/profile"
+                        to={userRole === "expert" ? `/expertProfile/${userId}` : "/user-profile"}
                         className="block px-4 py-2 text-sm text-[#FFA725] hover:bg-gray-100 hover:text-black"
                         onClick={() => setDropdownOpen(false)}
                       >
                         Profile
                       </Link>
+
                       <button
                         onClick={handleLogout}
                         className="w-full text-left px-4 py-2 text-sm text-[#FFA725] hover:bg-gray-100 hover:text-black"

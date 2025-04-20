@@ -2,16 +2,16 @@ import React from 'react'
 import Hero from './Hero'
 import MostViewed from './MostViewed'
 import  About from './About'
-import Testimonial from './Testimonial'
+import FeatureSection from './FeatureSection'
 import Statistics from './Statistics'
 import ApplyAsAssiss from './ApplyAsAssiss'
 function Home() {
   return (
    <>
    <Hero/>
+   <FeatureSection/>
    <MostViewed/>
    <About/>
-   {/* <Testimonial/> */}
    <Statistics/>
    <ApplyAsAssiss/>
    </>

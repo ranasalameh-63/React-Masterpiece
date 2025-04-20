@@ -12,11 +12,13 @@ const authRouter = require ('./Routes/authRoute')
 const addVideoRouter = require ('./Routes/addVideoRoute')
 const userRoute = require ('./Routes/userRoute')
 const expertRoute = require ('./Routes/expertRoutes')
+const expertProfileRoute = require ('./Routes/expertProfileRoute')
 const contactRoute = require ('./Routes/contactRoute')
 const paymentRoute = require ('./Routes/paymentRoute')
 const bookingRoute = require ('./Routes/bookingRoute')
 const voucherRoute = require ('./Routes/voucherRoute')
 const videoRoutes = require("./Routes/videoRoutes");
+
 
 
 const path = require("path");
@@ -47,11 +49,13 @@ app.use("/api/auth", authRouter);
 app.use("/api/videos", addVideoRouter);
 app.use("/api/user", userRoute);
 app.use("/api/expert", expertRoute);
+app.use("/api/profile", expertProfileRoute);
 app.use("/api/contact", contactRoute);
 app.use("/api/payment", paymentRoute);
 app.use("/api/booking", bookingRoute);
 app.use("/api/voucher", voucherRoute);
 app.use("/api/video", videoRoutes);
+
 
 
 
