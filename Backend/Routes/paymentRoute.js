@@ -1,11 +1,12 @@
-// /routes/paymentRoutes.js
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const paymentController = require('../Controllers/paymentController');
-const authMiddleware = require("../Middlewares/authMiddleware");
+const {
+  checkoutController,
+  stripeController,
+} = require("../Controllers/paymentController");
 
-
-router.post('/pay',authMiddleware ,paymentController.createPayment);
-router.get('/all', paymentController.getAllPayments);
+router.post("/paycash", checkoutController);
+router.post("/paypaypal", checkoutController);
+// router.post("/create-stripe-session", stripeController);
 
 module.exports = router;

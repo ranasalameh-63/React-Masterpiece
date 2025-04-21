@@ -179,7 +179,7 @@ try {
   console.log(response.data);
   console.log(result.user.id);
   dispatch(setUserId(result.user.id));
-  setSuccess("Registration successful! Redirecting to login page...");
+  setSuccess("Registration successful! Redirecting to Home page...");
 
 // Local storage
   const token = result.token;
@@ -190,7 +190,7 @@ try {
   expires.setMinutes(expires.getMinutes() + 60);
   document.cookie = `token=${token};expires=${expires.toUTCString()};path=/;secure`;
 
-  setTimeout(() => navigate("/login"), 1500);
+  setTimeout(() => navigate("/"), 1500);
 
 } catch (error) {
   console.error(error);

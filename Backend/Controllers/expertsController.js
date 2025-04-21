@@ -135,7 +135,7 @@ exports.getExpertById = async (req, res) => {
       return res.status(400).json({ message: "Invalid user ID format" });
     }
 
-    const expert = await Expert.findOne({ _id: id })
+    const expert = await Expert.findOne({ userId: id })
       .populate("userId", "fullName email role") 
       .select("userId location experienceYears skills profileImage"); 
 
@@ -143,10 +143,10 @@ exports.getExpertById = async (req, res) => {
       console.error("Expert not found for user id:", id);
       return res.status(404).json({ message: "Expert not found" });
     }
-
+console.log("fffff",expert);
     res.status(200).json({
       expertData: {
-        expertId:expert._id,
+        expertId:expert.userId._id,
         fullName: expert.userId.fullName,
         location: expert.location,
         experienceYears: expert.experienceYears,

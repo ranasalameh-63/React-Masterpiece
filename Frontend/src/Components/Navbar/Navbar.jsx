@@ -3,6 +3,8 @@ import { User, Menu, X, ChevronDown } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { clearUserId } from "../../Redux/userSlice"; 
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -11,6 +13,7 @@ const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const userId = useSelector((state) => state.user.userId);
   const userRole = useSelector((state) => state.user.role);
@@ -46,11 +49,14 @@ const Navbar = () => {
     document.cookie = `${name}=; Max-Age=0; path=/;`;
   };
 
-  const handleLogout = () => {
-    deleteCookie("token");
-    navigate("/login");
-    window.location.reload();
-  };
+const handleLogout = () => {
+  deleteCookie("token");
+
+  dispatch(clearUserId());
+  navigate("/");
+};
+
+  
 
   const defaultLinks = [
     { name: "Home", href: "/" },
@@ -63,7 +69,7 @@ const Navbar = () => {
 
   const roleBasedLinks = [];
   if (userRole === "admin") {
-    roleBasedLinks.push({ name: "Dashboard", href: "/dashboard" });
+    roleBasedLinks.push({ name: "Dashboard", href: "/admin" });
   }
   if (userRole === "expert") {
     roleBasedLinks.push({ name: "Add Video", href: "/addVideoForm" });
@@ -136,7 +142,7 @@ const Navbar = () => {
                   <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded shadow-md z-10">
                     <Link
                         to={userRole === "expert" ? `/expertProfile/${userId}` : "/userProfile"}
-                        className="block px-4 py-2 text-sm text-[#FFA725] hover:bg-gray-100 hover:text-black"
+                        className="block px-4 py-2 text-sm text-[#FFA725] cursor-pointer hover:bg-gray-100 hover:text-black"
                       onClick={() => setDropdownOpen(false)}
                     >
                       Profile
@@ -144,21 +150,21 @@ const Navbar = () => {
 
                     <Link
                       to="/about"
-                      className="block px-4 py-2 text-sm text-[#FFA725] hover:bg-gray-100 hover:text-black"
+                      className="block px-4 py-2 text-sm text-[#FFA725] cursor-pointer hover:bg-gray-100 hover:text-black"
                       onClick={() => setDropdownOpen(false)}
                     >
                       Our Story
                     </Link>
                     <Link
                       to="/contact"
-                      className="block px-4 py-2 text-sm text-[#FFA725] hover:bg-gray-100 hover:text-black"
+                      className="block px-4 py-2 text-sm text-[#FFA725] cursor-pointer hover:bg-gray-100 hover:text-black"
                       onClick={() => setDropdownOpen(false)}
                     >
                       Contact Us
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className="w-full text-left px-4 py-2 text-sm text-[#FFA725] hover:bg-gray-100 hover:text-black"
+                      className="w-full text-left px-4 py-2 cursor-pointer text-sm text-[#FFA725] hover:bg-gray-100 hover:text-black"
                     >
                       Logout
                     </button>

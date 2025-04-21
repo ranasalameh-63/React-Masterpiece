@@ -52,7 +52,6 @@ function App() {
           <Route path="/userProfile" element={<UserProfile />} />
           {/* <Route path="/expertProfile" element={<ExpertProfile />} /> */}
           <Route path="/expertProfile/:id" element={<ExpertProfile />} />
-
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/contact" element={<Contact />} />

@@ -1,22 +1,22 @@
-require("dotenv").config(); 
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const connectDB = require("./Config/db");  
-const jwt = require("jsonwebtoken");  
+const connectDB = require("./Config/db");
+const jwt = require("jsonwebtoken");
 const cookiesParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 
 
 
-const authRouter = require ('./Routes/authRoute')
-const addVideoRouter = require ('./Routes/addVideoRoute')
-const userRoute = require ('./Routes/userRoute')
-const expertRoute = require ('./Routes/expertRoutes')
-const expertProfileRoute = require ('./Routes/expertProfileRoute')
-const contactRoute = require ('./Routes/contactRoute')
-const paymentRoute = require ('./Routes/paymentRoute')
-const bookingRoute = require ('./Routes/bookingRoute')
-const voucherRoute = require ('./Routes/voucherRoute')
+const authRouter = require('./Routes/authRoute')
+const addVideoRouter = require('./Routes/addVideoRoute')
+const userRoute = require('./Routes/userRoute')
+const expertRoute = require('./Routes/expertRoutes')
+const expertProfileRoute = require('./Routes/expertProfileRoute')
+const contactRoute = require('./Routes/contactRoute')
+const paymentRoute = require('./Routes/paymentRoute')
+const bookingRoute = require('./Routes/bookingRoute')
+const voucherRoute = require('./Routes/voucherRoute')
 const videoRoutes = require("./Routes/videoRoutes");
 
 
@@ -36,8 +36,8 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json()); 
-app.use(express.urlencoded({ extended: true })); 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Connect to MongoDB using connectDB function

@@ -20,7 +20,7 @@ const Booking = () => {
   const [loading, setLoading] = useState(true);
   const userId = useSelector((state) => state.user.userId);
   const { id } = useParams();
-
+console.log(id);
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true); 
@@ -28,11 +28,13 @@ const Booking = () => {
         if (userId) {
           const userResponse = await axios.get(`http://localhost:7000/api/user/details/${userId}`);
           setUserData(userResponse.data);
+          console.log(userResponse.data);
         }
   
         if (id) {  
           const expertResponse = await axios.get(`http://localhost:7000/api/expert/get/${id}`);
           setExpertData(expertResponse.data.expertData);
+          console.log(expertResponse.data.expertData);
         }
   
       } catch (error) {
@@ -73,6 +75,7 @@ const Booking = () => {
   
     try {
       const token = getCookie("token");
+      console.log( "lllll",expertData.expertId);
       const response = await axios.post(
         'http://localhost:7000/api/booking/create',
         {
