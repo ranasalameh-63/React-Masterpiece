@@ -1,8 +1,7 @@
-# React-Masterpiece
 
-# 🛠️ DIY Home Repair Platform
+# 🛠️ BuildNest Home Repair Platform
 
-Welcome to the **DIY Home Repair Platform**! This platform empowers users to tackle everyday home repair issues through **video tutorials**, **step-by-step guides**, and the ability to **connect with professionals** when needed.
+Welcome to the **BuildNest Home Repair Platform**! This platform empowers users to tackle everyday home repair issues through **video tutorials**, **step-by-step guides**, and the ability to **connect with professionals** when needed.
 
 ---
 
@@ -12,7 +11,6 @@ Welcome to the **DIY Home Repair Platform**! This platform empowers users to tac
 - 🤖 AI assistant to diagnose common home issues
 - 🧑‍🔧 Find and connect with local professionals
 - 📚 Written guides and troubleshooting tips
-- 📷 Option to upload photos for better diagnosis
 
 ---
 ## 🧑‍💻 Technologies Used
