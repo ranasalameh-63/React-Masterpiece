@@ -8,6 +8,7 @@ const voucherSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   expertId: { type: mongoose.Schema.Types.ObjectId, ref: "Expert", required: true },
+  bookingId: { type: mongoose.Schema.Types.ObjectId, ref: "Booking", required: true },
 });
 
 voucherSchema.plugin(AutoIncrementFactory, { inc_field: 'voucherNumber' });

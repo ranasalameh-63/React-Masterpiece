@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const voucherController = require('../Controllers/voucherController');
+const { getVoucherByBookingId,createVoucher } = require('../Controllers/voucherController');
 
 
-router.post('/create', voucherController.createVoucher);
-// router.post('/pay', voucherController.processPayment);
+router.post('/create/:bookId', createVoucher);
+router.get("/booking/:bookingId", getVoucherByBookingId);
+
 
 module.exports = router;

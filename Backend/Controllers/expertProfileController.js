@@ -92,26 +92,6 @@ exports.updateCurrentExpert = async (req, res) => {
 
 
 
-// exports.getExpertBookings = async (req, res) => {
-//   try {
-//     const expertId = req.params;
-// console.log("gjhj",expertId);
-// const expertObjectId = mongoose.Types.ObjectId(expertId);
-//     const bookings = await Booking.find({ expertId:expertId})
-//       .populate("userId", "fullName email") 
-//       .sort({ preferredDate: -1 }); 
-
-//     res.status(200).json(bookings);
-//   } catch (error) {
-//     console.error("Error fetching expert bookings:", error);
-//     res.status(500).json({ message: "Server error while fetching bookings." });
-//   }
-// };
-const mongoose = require('mongoose');
-
-
-
-
 exports.getExpertBookings = async (req, res) => {
   try {
     const expertId =req.params;  
@@ -122,5 +102,35 @@ exports.getExpertBookings = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error fetching expert bookings" });
+  }
+};
+
+
+
+
+
+
+
+exports.updateBookingStatus = async (req, res) => {
+  const { bookingId, status } = req.body;  
+
+  if (!["confirmed", "canceled"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status value" }); 
+  }
+
+  try {
+      const booking = await Booking.findById(bookingId);
+
+      if (!booking) {
+          return res.status(404).json({ message: "Booking not found" }); 
+      }
+
+      booking.status = status;
+      await booking.save();
+
+      res.status(200).json({ message: "Booking status updated successfully", booking });
+  } catch (error) {
+      console.error("Error updating booking status:", error);
+      res.status(500).json({ message: "Server error" });
   }
 };

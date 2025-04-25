@@ -37,6 +37,7 @@ const Navbar = () => {
         .catch((error) => console.error("Error fetching user data:", error));
     }
   }, [userId]);
+  
 
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
@@ -63,8 +64,6 @@ const handleLogout = () => {
     { name: "Categories", href: "/categories" },
     { name: "Hire Pro", href: "/hirepro" },
     { name: "AI Assistant", href: "/ai" },
-    // { name: "Our story", href: "/about" },
-    // { name: "Contact Us", href: "/contact" },
   ];
 
   const roleBasedLinks = [];

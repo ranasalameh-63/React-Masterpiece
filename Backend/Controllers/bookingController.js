@@ -26,7 +26,7 @@ console.log("expert",expert);
       preferredTime,
       serviceDetails 
     });
-
+console.log("newBooking==",newBooking);
     const savedBooking = await newBooking.save();
 
     res.status(201).json({
@@ -65,9 +65,7 @@ exports.getBookingById = async (req, res) => {
     }
 
     const booking = await Booking.findById({ _id: id })
-      .populate('userId', '_id')  
-      .populate('expertId', '_id')
-      .select("userId expertId ");  
+    .select("userId expertId"); 
 
     if (!booking) {
       return res.status(404).json({ message: "Booking not found" });

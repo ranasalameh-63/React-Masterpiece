@@ -11,7 +11,7 @@ const Categories = () => {
     <div className="bg-white min-h-screen">
       {/* Hero Section */}
       <section className="relative bg-gray-100 overflow-hidden">
-        <div className="absolute inset-0 bg-[#D9EAFD] opacity-70"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-50 opacity-70"></div>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24 md:py-32 relative z-10">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-4xl md:text-5xl font-bold  text-gray-800 mb-6">

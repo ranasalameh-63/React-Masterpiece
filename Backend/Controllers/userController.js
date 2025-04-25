@@ -46,22 +46,23 @@ exports.details = async (req, res) => {
   exports.getUserBookings = async (req, res) => {
     try {
       const { userId } = req.params;
-  
+      console.log("userId",userId)
       if (!userId) {
         return res.status(400).json({ message: "User ID is required" });
       }
-  
-      const bookings = await Booking.find({ userId })
+      console.log(userId)
+      const bookings = await Booking.find({ userId:userId })
       .populate({
         path: "expertId",
-        select: "skills profileImage",
-        populate: {
-          path: "userId",
-          model: "User",
-          select: "fullName"
-        }
-      });
-      
+          select: "userId skills",
+          populate: {
+            path: "userId", 
+            model: "User",
+            select: "fullName"
+          } 
+        });
+
+      console.log("bbbb=",bookings);
   
       res.status(200).json(bookings);
     } catch (error) {
