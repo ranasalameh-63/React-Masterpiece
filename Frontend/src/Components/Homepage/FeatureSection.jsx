@@ -61,7 +61,7 @@ export default function EnhancedFeatureSection() {
                         </p>
                         <Link
                             to="/hirepro"
-                            className="mt-6 px-5 py-2 rounded-lg text-white font-medium transition-colors duration-300 bg-[#FFA725] hover:bg-amber-500"
+                            className="mt-12 px-5 py-2 rounded-lg text-white font-medium transition-colors duration-300 bg-[#FFA725] hover:bg-amber-500"
                         >
                             Find Inspiration
                         </Link>

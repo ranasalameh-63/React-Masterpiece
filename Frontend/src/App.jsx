@@ -57,7 +57,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/addVideoForm" element={<AddVideoForm />} />
-          <Route path="/paymentForm" element={<PaymentForm />} />
+          <Route path="/paymentForm/:bookingId" element={<PaymentForm />} />
           <Route path="createVoucher/:bookId" element={<CreateVoucher />} />
         </Routes>
       </Layout>

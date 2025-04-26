@@ -2,14 +2,11 @@ const Payment = require("../Models/paymentModel");
 
 const checkoutController = async (req, res) => {
   try {
-    const { amount, paymentMethod, status, userId } = req.body;
+    const { amount, paymentMethod, status, userId, voucherId, bookingId } = req.body;
+    console.log(req.body)
 
-    if (!amount || !paymentMethod || !status || !userId) {
+    if (!amount || !paymentMethod || !status || !userId || !voucherId || !bookingId) {
       return res.status(400).json({ message: "Missing required fields" });
-    }
-
-    if (paymentMethod !== "paypal") {
-      return res.status(400).json({ message: "Only PayPal is supported" });
     }
 
     const payment = await Payment.create({
@@ -17,6 +14,8 @@ const checkoutController = async (req, res) => {
       amount,
       paymentMethod,
       status,
+      voucherId,
+      bookingId,
     });
 
     return res.status(200).json({
@@ -25,10 +24,11 @@ const checkoutController = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: "Error processing PayPal payment",
+      message: "Error processing payment",
       error: error.message,
     });
   }
 };
 
 module.exports = { checkoutController };
+

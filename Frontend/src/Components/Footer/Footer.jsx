@@ -9,7 +9,7 @@ export default function Footer() {
             
             {/* Logo & Description */}
             <div className="col-span-2 md:col-span-3 lg:col-span-2 lg:pr-8">
-              <h3 className="font-bold text-3xl text-[#FFA725]">DIY Home Repair</h3>
+              <h3 className="font-bold text-3xl text-[#FFA725] font-serif">BuildNest</h3>
               <p className="text-base leading-relaxed text-black mt-7">
                 Your go-to platform for easy DIY home repairs. Access expert tutorials, get AI-driven repair suggestions, and connect with professionals for complex issues.
               </p>

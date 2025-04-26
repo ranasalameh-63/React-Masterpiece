@@ -18,6 +18,7 @@ const paymentRoute = require('./Routes/paymentRoute')
 const bookingRoute = require('./Routes/bookingRoute')
 const voucherRoute = require('./Routes/voucherRoute')
 const videoRoutes = require("./Routes/videoRoutes");
+const statisticsRoutes = require("./Routes/statisticsRoute");
 
 
 
@@ -55,6 +56,8 @@ app.use("/api/payment", paymentRoute);
 app.use("/api/booking", bookingRoute);
 app.use("/api/voucher", voucherRoute);
 app.use("/api/video", videoRoutes);
+app.use("/api/view", statisticsRoutes);
+
 
 
 

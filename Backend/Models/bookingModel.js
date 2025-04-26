@@ -6,7 +6,9 @@ const bookingSchema = new mongoose.Schema({
   preferredDate: { type: Date, required: true },
   preferredTime: { type: String, required: true },
   serviceDetails: { type: String, required: false },
-  status: { type: String, enum: ["pending", "confirmed", "canceled"], default: "pending" }
+  status: { type: String, enum: ["pending", "confirmed", "canceled"], default: "pending" },
+  bookingType: { type: String, enum: ["session", "home"], default: "session" }, 
+
 });
 
 const Booking = mongoose.model("Booking", bookingSchema);

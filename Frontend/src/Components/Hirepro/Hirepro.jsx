@@ -71,7 +71,7 @@ const Hirepro = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-white min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-16 ml-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-20">

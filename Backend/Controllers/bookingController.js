@@ -4,7 +4,7 @@ const Expert = require('../Models/expertsModel');
 
 exports.createBooking = async (req, res) => {
   try {
-    const { userId, expertId, preferredDate, preferredTime, serviceDetails } = req.body;
+    const { userId, expertId, preferredDate, preferredTime, serviceDetails, bookingType } = req.body;
     console.log("req= ",req.body)
 
     const user = await User.findById(userId);
@@ -24,7 +24,8 @@ console.log("expert",expert);
       expertId,
       preferredDate,
       preferredTime,
-      serviceDetails 
+      serviceDetails,
+      bookingType
     });
 console.log("newBooking==",newBooking);
     const savedBooking = await newBooking.save();
