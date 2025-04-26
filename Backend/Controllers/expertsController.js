@@ -79,48 +79,51 @@ exports.createExpert = async (req, res) => {
 };
 
 
+
 exports.getAllExperts = async (req, res) => {
   try {
     const { page = 1, limit = 10, search, skills, location } = req.query;
 
-    const skip = (page - 1) * limit;  
+    const skip = (page - 1) * limit;
 
     const filter = {};
 
-    if (search) {
-      filter["userId.fullName"] = { $regex: search, $options: "i" }; 
-    }
-
     if (skills) {
-      filter.skills = { $in: skills.split(",") };  
+      filter.skills = { $in: skills.split(",") };
     }
 
     if (location) {
-      filter.location = { $regex: location, $options: "i" }; 
+      filter.location = { $regex: location, $options: "i" };
     }
 
     const experts = await Expert.find(filter)
-      .populate("userId", "fullName email")
+      .populate({
+        path: "userId",
+        match: { role: "expert", ...(search && { fullName: { $regex: search, $options: "i" } }) },
+        select: "fullName email",
+      })
       .select("userId location experienceYears skills profileImage")
-      .skip(skip) 
-      .limit(parseInt(limit)); 
+      .skip(skip)
+      .limit(parseInt(limit));
 
-    const totalExperts = await Expert.countDocuments(filter);
+    const filteredExperts = experts.filter(expert => expert.userId);
 
+    const totalExperts = filteredExperts.length;
     const totalPages = Math.ceil(totalExperts / limit);
 
     res.status(200).json({
-      data: experts,
+      data: filteredExperts,
       totalExperts,
       totalPages,
-      currentPage: page,
-      perPage: limit,
+      currentPage: parseInt(page),
+      perPage: parseInt(limit),
     });
   } catch (error) {
     console.error("Error fetching experts:", error.message);
     res.status(500).json({ error: error.message });
   }
 };
+
 
 
   

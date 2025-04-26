@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../Models/usersModel"); 
 
 
-const authMiddleware = (req, res, next) => {
+exports.authMiddleware = (req, res, next) => {
   try {
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
 
@@ -37,4 +37,27 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+
+
+exports.adminMiddleware = (req, res, next) => {
+  const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({
+      message: "Unauthorized. No user information found. Please log in.",
+      code: "USER_NOT_FOUND"
+    });
+  }
+
+  if (req.user.role !== "Admin") {
+    return res.status(403).json({
+      message: `Access denied. You need to be an admin to access this resource. Your role is ${req.user.role}.`,
+      code: "INSUFFICIENT_PERMISSIONS"
+    });
+  }
+
+  next();
+};
+
+
+

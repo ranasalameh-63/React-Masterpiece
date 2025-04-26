@@ -67,8 +67,8 @@ const handleLogout = () => {
   ];
 
   const roleBasedLinks = [];
-  if (userRole === "admin") {
-    roleBasedLinks.push({ name: "Dashboard", href: "/admin" });
+  if (userRole === "Admin") {
+    roleBasedLinks.push({ name: "Dashboard Panel", href: "/admin/statistics" });
   }
   if (userRole === "expert") {
     roleBasedLinks.push({ name: "Add Video", href: "/addVideoForm" });
