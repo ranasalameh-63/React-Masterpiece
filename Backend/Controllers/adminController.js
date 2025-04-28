@@ -3,6 +3,8 @@ const User = require("../Models/usersModel");
 const Booking = require("../Models/bookingModel");
 const Video = require("../Models/videosModel");
 const Expert = require("../Models/expertsModel");
+const Payment = require("../Models/paymentModel");
+const Contact = require("../Models/contactModel");
 
 
 exports.details = async (req, res) => {
@@ -121,6 +123,65 @@ exports.approveExpert = async (req, res) => {
 
 
 
+exports.getAllBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find()
+      .populate('userId')   
+      .populate('expertId'); 
+
+    res.status(200).json(bookings);
+  } catch (error) {
+    console.error("Error fetching bookings:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
 
 
 
+exports.getAllPayments = async (req, res) => {
+  try {
+    const payments = await Payment.find()
+      .populate('userId', 'fullName email')  
+      .populate('voucherId', 'amount details voucherNumber')  
+      .populate('bookingId', 'preferredDate preferredTime')  
+      .select('userId amount paymentMethod status createdAt');  
+
+    res.status(200).json(payments);  
+  } catch (error) {
+    console.error("Error fetching payments:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+
+exports.getAllMessages = async (req, res) => {
+  try {
+    const messages = await Contact.find().select('name email message createdAt reply replyDate');
+    res.status(200).json(messages);  
+  } catch (error) {
+    console.error("Error fetching messages:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.replyToMessage = async (req, res) => {
+  try {
+    const { messageId, reply } = req.body;
+    const contactMessage = await Contact.findById(messageId);
+
+    if (!contactMessage) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+
+    contactMessage.reply = reply;
+    contactMessage.replyDate = new Date();
+
+    await contactMessage.save();
+    res.status(200).json({ message: "Reply sent successfully" });
+  } catch (error) {
+    console.error("Error replying to message:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};

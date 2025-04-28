@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import axios from "axios";
 
 
 function AdminProfile() {
 
-    const dispatch = useDispatch();
     const userId = useSelector((state) => state.user.userId);
     const [userData, setUserData] = useState(null);
     

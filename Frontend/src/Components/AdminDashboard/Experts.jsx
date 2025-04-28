@@ -1,101 +1,3 @@
-// import { useEffect, useState } from "react";
-// import axios from "axios";
-// import Swal from "sweetalert2";
-// import { useSelector } from "react-redux";
-
-// function PendingExperts() {
-//   const [pendingExperts, setPendingExperts] = useState([]);
-//   const token = useSelector((state) => state.user.token);
-
-//   useEffect(() => {
-//     fetchPendingExperts();
-//   }, []);
-
-//   const fetchPendingExperts = async () => {
-//     try {
-//       const res = await axios.get('http://localhost:7000/api/admin/pendingExperts', {
-//         headers: {
-//           Authorization: `Bearer ${token}`
-//         }
-//       });
-//       setPendingExperts(res.data);
-//     } catch (error) {
-//       console.error(error);
-//     }
-//   };
-
-//   const approveExpert = async (userId) => {
-//     const result = await Swal.fire({
-//       title: 'Are you sure?',
-//       text: "You want to approve this expert!",
-//       icon: 'warning',
-//       showCancelButton: true,
-//       confirmButtonColor: '#FFA725',
-//       cancelButtonColor: '#d33',
-//       confirmButtonText: 'Yes, approve!'
-//     });
-
-//     if (result.isConfirmed) {
-//       try {
-//         await axios.patch(`http://localhost:7000/api/admin/approveExpert/${userId}`, {}, {
-//           headers: {
-//             Authorization: `Bearer ${token}`
-//           }
-//         });
-//         Swal.fire({
-//           title: "Approved!",
-//           text: "User is now an Expert.",
-//           icon: "success",
-//           confirmButtonColor: "#FFA725"
-//         });
-//         fetchPendingExperts(); 
-//       } catch (error) {
-//         Swal.fire({
-//           title: "Error!",
-//           text: "Failed to approve expert.",
-//           icon: "error",
-//           confirmButtonColor: "#FFA725"
-//         });
-//       }
-//     }
-//   };
-
-//   return (
-//     <div className="p-6">
-//       <h2 className="text-2xl font-bold mb-6">Pending Expert Requests</h2>
-//       {pendingExperts.length === 0 ? (
-//         <div className="text-gray-500">No pending experts.</div>
-//       ) : (
-//         <div className="grid gap-4">
-//           {pendingExperts.map((expert) => (
-//             <div key={expert._id} className="flex justify-between items-center p-4 bg-white border rounded-lg shadow-sm">
-//               <div>
-//                 <h3 className="font-semibold text-lg">{expert.userId.fullName}</h3>
-//                 <p className="text-gray-600 text-sm">{expert.phoneNumber}</p>
-//                 <p className="text-gray-600 text-sm">{expert.location}</p>
-//                 <p className="text-gray-600 text-sm">{expert.experienceYears}</p>
-//                 <p className="text-gray-600 text-sm">{expert.aboutYourself}</p>
-//                 <p className="text-gray-600 text-sm">{expert.skills}</p>
-//                 <p className="text-gray-600 text-sm">{expert.availability}</p>
-
-//               </div>
-//               <button 
-//                 onClick={() => approveExpert(expert.userId._id)}
-//                 className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
-//               >
-//                 Approve
-//               </button>
-//             </div>
-//           ))}
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
-// export default PendingExperts;
-
-
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -153,13 +55,52 @@ function PendingExperts() {
           icon: "success",
           confirmButtonColor: "#FFA725"
         });
-        fetchPendingExperts(); 
+        fetchPendingExperts();
       } catch (error) {
         Swal.fire({
           title: "Error!",
           text: "Failed to approve expert application.",
           icon: "error",
           confirmButtonColor: "#FFA725"
+        });
+      }
+    }
+  };
+
+  const rejectExpert = async (userId, name) => {
+    const result = await Swal.fire({
+      title: 'Reject Expert Application',
+      text: `Are you sure you want to reject ${name}'s application?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#999',
+      confirmButtonText: 'Yes, reject!',
+      cancelButtonText: 'Cancel',
+      background: '#ffffff',
+      borderRadius: '10px'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.patch(`http://localhost:7000/api/admin/rejectExpert/${userId}`, {}, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        Swal.fire({
+          title: "Application Rejected!",
+          text: "The expert application has been rejected.",
+          icon: "success",
+          confirmButtonColor: "#d33"
+        });
+        fetchPendingExperts();
+      } catch (error) {
+        Swal.fire({
+          title: "Error!",
+          text: "Failed to reject expert application.",
+          icon: "error",
+          confirmButtonColor: "#d33"
         });
       }
     }
@@ -183,7 +124,7 @@ function PendingExperts() {
         </div>
         <h2 className="text-2xl font-bold text-gray-800">Expert Applications</h2>
       </div>
-      
+
       {pendingExperts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-gray-500">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mb-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -207,15 +148,24 @@ function PendingExperts() {
                     <p className="text-gray-600 text-sm">{expert.phoneNumber}</p>
                   </div>
                 </div>
-                <button 
-                  onClick={() => approveExpert(expert.userId._id, expert.userId.fullName)}
-                  className="px-4 py-2 rounded-lg text-white transition-colors duration-300"
-                  style={{ backgroundColor: "#FFA725" }}
-                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#F59E0B"}
-                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#FFA725"}
-                >
-                  Approve Expert
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => approveExpert(expert.userId._id, expert.userId.fullName)}
+                    className="px-4 py-2 rounded-lg text-white transition-colors duration-300 cursor-pointer"
+                    style={{ backgroundColor: "#FFA725" }}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#F59E0B"}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#FFA725"}
+                  >
+                    Approve
+                  </button>
+
+                  <button
+                    onClick={() => rejectExpert(expert.userId._id, expert.userId.fullName)}
+                    className="px-4 py-2 rounded-lg text-white transition-colors duration-300 cursor-pointer bg-red-500 hover:bg-red-600"
+                  >
+                    Reject
+                  </button>
+                </div>
               </div>
 
               <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -233,26 +183,25 @@ function PendingExperts() {
                     <p className="text-gray-700">{expert.availability || "Not specified"}</p>
                   </div>
                 </div>
-                
+
                 <div className="space-y-3">
                   <div>
                     <h4 className="text-xs uppercase tracking-wide text-gray-500 font-semibold mb-1">Skills</h4>
                     {Array.isArray(expert.skills) ? (
-  expert.skills.map((skill, idx) => (
-    <span key={idx} className="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-full">
-      {skill.trim()}
-    </span>
-  ))
-) : typeof expert.skills === 'string' ? (
-  expert.skills.split(',').map((skill, idx) => (
-    <span key={idx} className="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-full">
-      {skill.trim()}
-    </span>
-  ))
-) : (
-  <span className="text-gray-500">No skills specified</span>
-)}
-
+                      expert.skills.map((skill, idx) => (
+                        <span key={idx} className="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-full mr-2">
+                          {skill.trim()}
+                        </span>
+                      ))
+                    ) : typeof expert.skills === 'string' ? (
+                      expert.skills.split(',').map((skill, idx) => (
+                        <span key={idx} className="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-full mr-2">
+                          {skill.trim()}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-gray-500">No skills specified</span>
+                    )}
                   </div>
                   <div>
                     <h4 className="text-xs uppercase tracking-wide text-gray-500 font-semibold mb-1">About</h4>
@@ -269,3 +218,4 @@ function PendingExperts() {
 }
 
 export default PendingExperts;
+
