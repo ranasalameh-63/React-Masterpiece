@@ -49,7 +49,7 @@ exports.adminMiddleware = (req, res, next) => {
     });
   }
 
-  if (req.user.role !== "Admin") {
+  if (req.user.role !== "admin") {
     return res.status(403).json({
       message: `Access denied. You need to be an admin to access this resource. Your role is ${req.user.role}.`,
       code: "INSUFFICIENT_PERMISSIONS"

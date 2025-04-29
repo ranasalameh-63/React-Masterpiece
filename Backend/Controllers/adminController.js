@@ -20,6 +20,33 @@ exports.details = async (req, res) => {
     }
   };
 
+
+
+  exports.updateUser = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { fullName, email, password } = req.body;  
+  
+      const user = await User.findById(id);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      if (req.file) {
+        user.profilePicture = `/uploads/${req.file.filename}`;
+      }
+  
+      if (fullName) user.fullName = fullName;
+      if (email)    user.email    = email;
+      if (password) user.password = password;  
+  
+      await user.save();  
+      res.json(user);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Error updating user data" });
+    }
+  };
   
 
 

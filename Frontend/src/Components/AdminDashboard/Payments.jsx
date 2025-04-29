@@ -189,7 +189,7 @@ const PaymentList = () => {
                     {payment.voucherId?.voucherNumber || "No voucher"}
                   </td>
                   <td className="py-3 px-4 border-b">
-                    {payment.voucherId?.amount ? `$${payment.voucherId.amount.toFixed(2)}` : "-"}
+                    {payment.voucherId?.amount ? `${payment.voucherId.amount.toFixed(2)}JD` : "-"}
                   </td>
                   <td className="py-3 px-4 border-b">
                     {payment.voucherId?.details || "-"}
