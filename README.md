@@ -25,11 +25,22 @@ Welcome to the **BuildNest Home Repair Platform**! This platform empowers users 
 
 ---
 
-## Trello Board
+## ✨ Trello Board
 
 [MasterTrello](https://trello.com/b/aHYfFsLT/masterpiece)
 
 ---
 
-## Figma for Mockup and Wierframe
+## ✨ Figma for Mockup and Wierframe
 [FigmaDesign](https://www.figma.com/design/nT9NFoqYWtMsTUKLYkH2Vq/Masterpiece?node-id=0-1&t=8qcNW13gJgayFrjf-1)
+
+---
+
+## ✨ Presentation
+[Presentation](https://www.canva.com/design/DAGl_rFvCfU/PmoCEqAHjxM4keYGANkiLg/edit?utm_content=DAGl_rFvCfU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+
+---
+## ✨ Documentation
+[Documentation](https://drive.google.com/file/d/1wcCBBk2U-Rk1aEfBDFH3Vk8Xi-lPGVOs/view?usp=drive_link)
+
+
