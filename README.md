@@ -41,6 +41,6 @@ Welcome to the **BuildNest Home Repair Platform**! This platform empowers users 
 
 ---
 ## Documentation
-[Documentation]([https://drive.google.com/file/d/1wcCBBk2U-Rk1aEfBDFH3Vk8Xi-lPGVOs/view?usp=drive_link])
+[Documentation](https://drive.google.com/file/d/1wcCBBk2U-Rk1aEfBDFH3Vk8Xi-lPGVOs/view?usp=drive_link)
 
 
