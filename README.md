@@ -36,8 +36,8 @@ Welcome to the **BuildNest Home Repair Platform**! This platform empowers users 
 
 ---
 
-## presentation
-[Canva presentation](https://www.canva.com/design/DAGl_rFvCfU/PmoCEqAHjxM4keYGANkiLg/edit?utm_content=DAGl_rFvCfU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+## Presentation
+[presentation](https://www.canva.com/design/DAGl_rFvCfU/PmoCEqAHjxM4keYGANkiLg/edit?utm_content=DAGl_rFvCfU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 ---
 ## Documentation
