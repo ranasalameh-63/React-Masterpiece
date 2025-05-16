@@ -7,6 +7,8 @@ const { getAllUsers,
     getPendingExperts,
     approveExpert,
     getAllBookings,
+    updateBookingStatus,
+    exportBookingsToCSV,
     getAllPayments,
     getAllMessages,
     replyToMessage,
@@ -19,6 +21,7 @@ router.delete("/delete/:id", deleteUser);
 router.get("/pendingExperts", getPendingExperts);
 router.patch("/approveExpert/:userId", approveExpert);
 router.get('/allBookings', getAllBookings);
+router.get('/exportBookings', exportBookingsToCSV);
 router.get("/payments", getAllPayments);
 router.get("/messages", getAllMessages);
 router.post("/reply", replyToMessage);

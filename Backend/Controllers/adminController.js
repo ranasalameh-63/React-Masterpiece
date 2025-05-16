@@ -5,6 +5,7 @@ const Video = require("../Models/videosModel");
 const Expert = require("../Models/expertsModel");
 const Payment = require("../Models/paymentModel");
 const Contact = require("../Models/contactModel");
+const { Parser } = require('json2csv'); 
 
 
 exports.details = async (req, res) => {
@@ -152,13 +153,45 @@ exports.approveExpert = async (req, res) => {
 
 exports.getAllBookings = async (req, res) => {
   try {
-    const bookings = await Booking.find()
-      .populate('userId')   
-      .populate('expertId'); 
+    const { status, expert} = req.query; 
+
+    let filter = {};
+    if (status) filter.status = status;
+    if (expert) filter.expertId = expert;
+
+    const bookings = await Booking.find(filter)
+      .populate('userId')
+      .populate('expertId');
 
     res.status(200).json(bookings);
   } catch (error) {
     console.error("Error fetching bookings:", error.message);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+exports.exportBookingsToCSV = async (req, res) => {
+  try {
+    const bookings = await Booking.find()
+      .populate('userId')
+      .populate('expertId');
+
+    const bookingsData = bookings.map(booking => ({
+      user: booking.userId?.fullName,
+      expert: booking.expertId?.userId?.fullName,
+      date: new Date(booking.preferredDate).toLocaleDateString(),
+      status: booking.status,
+    }));
+
+    const json2csvParser = new Parser();
+    const csv = json2csvParser.parse(bookingsData);
+
+    res.header('Content-Type', 'text/csv');
+    res.attachment('bookings.csv'); 
+    res.send(csv); 
+  } catch (error) {
+    console.error("Error exporting bookings:", error.message);
     res.status(500).json({ error: error.message });
   }
 };

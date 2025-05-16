@@ -5,25 +5,57 @@ import { useSelector } from "react-redux";
 function AllBookings() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({
+    status: '',
+    expert: '',
+    date: ''
+  });
   const token = useSelector((state) => state.user.token);
 
   useEffect(() => {
-    fetchBookings();
-  }, []);
+    fetchBookingsWithFilters();
+  }, [filters]);
 
-  const fetchBookings = async () => {
+  const fetchBookingsWithFilters = async () => {
     try {
       setLoading(true);
       const res = await axios.get('http://localhost:7000/api/admin/allBookings', {
         headers: {
           Authorization: `Bearer ${token}`
-        }
+        },
+        params: filters
       });
       setBookings(res.data);
       setLoading(false);
     } catch (error) {
       console.error(error);
       setLoading(false);
+    }
+  };
+
+  const handleFilterChange = (e) => {
+    setFilters({
+      ...filters,
+      [e.target.name]: e.target.value
+    });
+  };
+
+
+  const exportBookingsToCSV = async () => {
+    try {
+      const res = await axios.get('http://localhost:7000/api/admin/exportBookings', {
+        headers: { Authorization: `Bearer ${token}` },
+        responseType: 'blob'
+      });
+
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'bookings.csv');
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error("Error exporting bookings", error);
     }
   };
 
@@ -45,7 +77,34 @@ function AllBookings() {
           <span className="font-medium">{bookings.length}</span> Total Bookings
         </div>
       </div>
-      
+
+      {/* فلاتر البحث */}
+      <div className="flex gap-4 mb-6">
+        
+        <select
+          name="status"
+          value={filters.status}
+          onChange={handleFilterChange}
+          className="px-4 py-2 border rounded-lg"
+        >
+          <option value="">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="canceled">Canceled</option>
+        </select>
+        <input
+          type="text"
+          name="expert"
+          value={filters.expert}
+          onChange={handleFilterChange}
+          placeholder="Search by Expert"
+          className="px-4 py-2 border rounded-lg"
+        />
+        <button onClick={fetchBookingsWithFilters} className="px-4 py-2 bg-[#FFA725] text-white rounded-lg">
+          Apply Filters
+        </button>
+      </div>
+
       {bookings.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-gray-500 bg-white">
           <div className="w-16 h-16 mb-4 flex items-center justify-center rounded-full bg-[#FFF5E6] text-[#FFA725]">
@@ -73,49 +132,38 @@ function AllBookings() {
             <tbody>
               {bookings.map((booking) => (
                 <tr key={booking._id} className="hover:bg-[#FFF5E6] transition-colors duration-150">
-                  <td className="py-3 px-4 border-b">
-                    {booking.userId?.fullName || "Unknown User"}
-                  </td>
-                  <td className="py-3 px-4 border-b">
-                    {booking.expertId?.userId?.fullName || "Unknown Expert"}
-                  </td>
-                  <td className="py-3 px-4 border-b">
-                    {new Date(booking.preferredDate).toLocaleDateString()}
-                  </td>
-                  <td className="py-3 px-4 border-b">
-                    {booking.preferredTime}
-                  </td>
+                  <td className="py-3 px-4 border-b">{booking.userId?.fullName || "Unknown User"}</td>
+                  <td className="py-3 px-4 border-b">{booking.expertId?.userId?.fullName || "Unknown Expert"}</td>
+                  <td className="py-3 px-4 border-b">{new Date(booking.preferredDate).toLocaleDateString()}</td>
+                  <td className="py-3 px-4 border-b">{booking.preferredTime}</td>
                   <td className="py-3 px-4 border-b capitalize">
-                    <span className="px-2 py-1 bg-[#FFF5E6] text-[#FFA725] rounded-md text-xs">
-                      {booking.bookingType}
-                    </span>
+                    <span className="px-2 py-1 bg-[#FFF5E6] text-[#FFA725] rounded-md text-xs">{booking.bookingType}</span>
                   </td>
                   <td className="py-3 px-4 border-b capitalize">
                     <span
                       className={`px-3 py-1 rounded-full text-white text-xs ${
-                        booking.status === "pending"
-                          ? "bg-yellow-500"
-                          : booking.status === "confirmed"
-                          ? "bg-green-500"
-                          : "bg-red-500"
+                        booking.status === "pending" ? "bg-yellow-500" :
+                        booking.status === "confirmed" ? "bg-green-500" : "bg-red-500"
                       }`}
                     >
                       {booking.status}
                     </span>
                   </td>
-                  <td className="py-3 px-4 border-b">
-                    {booking.serviceDetails || "No details"}
-                  </td>
+                  <td className="py-3 px-4 border-b">{booking.serviceDetails || "No details"}</td>
+                  
                 </tr>
               ))}
             </tbody>
           </table>
-          
           <div className="mt-6 text-sm text-gray-500 bg-white p-4 border border-gray-100 rounded">
             <p>This table displays all bookings in the system. You can view detailed information about each booking, including the assigned expert, scheduled date and time, and current status.</p>
           </div>
         </div>
       )}
+
+      <button onClick={exportBookingsToCSV} className="px-4 py-2 bg-[#FFA725] text-white rounded-lg mt-6">
+        Export to CSV
+      </button>
     </div>
   );
 }

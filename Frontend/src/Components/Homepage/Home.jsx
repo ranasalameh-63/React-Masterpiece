@@ -5,6 +5,7 @@ import  About from './About'
 import FeatureSection from './FeatureSection'
 import Statistics from './Statistics'
 import ApplyAsAssiss from './ApplyAsAssiss'
+import VideoChat from '../VideoChat/VideoChat'
 function Home() {
   return (
    <>
@@ -14,6 +15,7 @@ function Home() {
    <About/>
    <Statistics/>
    <ApplyAsAssiss/>
+   {/* <VideoChat/> */}
    </>
   )
 }
