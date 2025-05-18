@@ -64,7 +64,7 @@ function App() {
           <Route path="/category/:categoryName" element={<CategoryVideos />} />
           <Route path="/hirepro" element={<Hirepro />} />
           <Route path="/videoChat" element={<VideoChat />} />
-          <Route path="/booking/:id" element={<Booking />} />
+          <Route path="/booking/:expertId" element={<Booking />} />
           <Route path="/ai" element={<AI />} />
           <Route path="/userProfile" element={<UserProfile />} />
           <Route path="/expertProfile/:id" element={<ExpertProfile />} />

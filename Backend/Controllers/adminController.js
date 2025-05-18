@@ -160,9 +160,18 @@ exports.getAllBookings = async (req, res) => {
     if (expert) filter.expertId = expert;
 
     const bookings = await Booking.find(filter)
-      .populate('userId')
-      .populate('expertId');
-
+      .populate({
+        path: 'userId',
+      })
+      .populate({
+        path: 'expertId',
+        populate: {
+          path: 'userId',
+          select: 'fullName'
+        }
+      });
+    console.log(bookings);
+    
     res.status(200).json(bookings);
   } catch (error) {
     console.error("Error fetching bookings:", error.message);

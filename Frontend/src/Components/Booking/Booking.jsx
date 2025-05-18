@@ -19,8 +19,10 @@ const Booking = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const userId = useSelector((state) => state.user.userId);
-  const { id } = useParams();
-  console.log(id);
+  const { expertId } = useParams();
+  console.log("expertId"+ expertId);
+  
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -31,8 +33,8 @@ const Booking = () => {
           console.log(userResponse.data);
         }
 
-        if (id) {
-          const expertResponse = await axios.get(`http://localhost:7000/api/expert/get/${id}`);
+        if (expertId) {
+          const expertResponse = await axios.get(`http://localhost:7000/api/expert/get/${expertId}`);
           setExpertData(expertResponse.data.expertData);
           console.log(expertResponse.data.expertData);
         }
@@ -46,7 +48,7 @@ const Booking = () => {
     };
 
     fetchData();
-  }, [userId, id]);
+  }, [userId, expertId]);
 
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
@@ -63,6 +65,7 @@ const Booking = () => {
       [name]: value
     });
   };
+      console.log("lllll", expertData);
 
   // Handle form submit
   const handleSubmit = async (e) => {
@@ -88,7 +91,7 @@ const Booking = () => {
         {
           ...formData,
           userId,
-          expertId: expertData.expertId,
+          expertId: expertId, 
           bookingType
         },
         {

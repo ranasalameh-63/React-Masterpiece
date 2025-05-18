@@ -131,19 +131,19 @@ exports.getAllExperts = async (req, res) => {
 
 exports.getExpertById = async (req, res) => {
   try {
-    const { id } = req.params; 
+    const { expertId } = req.params; 
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      console.log("Invalid ObjectId format:", id);
+    if (!mongoose.Types.ObjectId.isValid(expertId)) {
+      console.log("Invalid ObjectId format:", expertId);
       return res.status(400).json({ message: "Invalid user ID format" });
     }
 
-    const expert = await Expert.findOne({ userId: id })
+    const expert = await Expert.findOne({ _id:expertId })
       .populate("userId", "fullName email role") 
       .select("userId location experienceYears skills profileImage"); 
 
     if (!expert) {
-      console.error("Expert not found for user id:", id);
+      console.error("Expert not found for user id:", expertId);
       return res.status(404).json({ message: "Expert not found" });
     }
 console.log("fffff",expert);

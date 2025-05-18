@@ -5,6 +5,6 @@ const upload = require("../Multer/multerConfig");
 
 router.post("/add", upload.single("profileImage"), expertController.createExpert);
 router.get("/all", expertController.getAllExperts);
-router.get("/get/:id", expertController.getExpertById);
+router.get("/get/:expertId", expertController.getExpertById);
 
 module.exports = router;

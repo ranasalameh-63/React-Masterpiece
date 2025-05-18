@@ -5,11 +5,11 @@ const Expert = require('../Models/expertsModel');
 exports.createBooking = async (req, res) => {
   try {
     const { userId, expertId, preferredDate, preferredTime, serviceDetails, bookingType } = req.body;
-    console.log("req= ",req.body)
+    console.log("req= ", expertId)
 
     const user = await User.findById(userId);
    
-    const expert = await Expert.findOne({ userId: expertId });
+    const expert = await Expert.findOne({ _id: expertId });
 console.log("expert",expert);
     if (!user) {
       return res.status(400).json({ message: "User not found" });

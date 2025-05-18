@@ -16,8 +16,8 @@ const Hirepro = () => {
   const navigate = useNavigate();
 
 
-  const handleClick = (id) => {
-    navigate(`/booking/${id}`);
+  const handleClick = (expertId) => {
+    navigate(`/booking/${expertId}`);
   };
 
 
@@ -184,7 +184,7 @@ const Hirepro = () => {
                   <div className="border-t border-gray-200 my-4"></div>
                   <div
                     onClick={() => {
-                      handleClick(expert.userId._id);
+                      handleClick(expert._id );
                     }}
                     className="block w-full cursor-pointer text-center bg-white border-2 border-[#FFA725] text-[#FFA725] hover:bg-[#FFA725] hover:text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
                   >
