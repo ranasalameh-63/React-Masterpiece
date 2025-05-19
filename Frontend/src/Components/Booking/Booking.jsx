@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { useParams } from 'react-router-dom';
 import Loader from "../Loader/Loader";
 
+
 const Booking = () => {
   const [formData, setFormData] = useState({
     preferredDate: '',
@@ -20,6 +21,7 @@ const Booking = () => {
   const [loading, setLoading] = useState(true);
   const userId = useSelector((state) => state.user.userId);
   const { expertId } = useParams();
+  const currentDate = new Date().toISOString().split('T')[0];
   console.log("expertId"+ expertId);
   
 
@@ -194,6 +196,7 @@ const Booking = () => {
                       onChange={handleChange}
                       className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition bg-gray-50"
                       required
+                      min={currentDate}
                     />
                     <Calendar size={16} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   </div>

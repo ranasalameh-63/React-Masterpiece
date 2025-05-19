@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import Loader from "../Loader/Loader";
-import { MapPin, Calendar, Clock, Star, MessageCircle, Phone, Mail, Cake, User, Edit, CheckCircle, XCircle, Clock3 } from 'lucide-react';
+import { Video, MapPin, Calendar, Clock, Star, MessageCircle, Phone, Mail, Cake, User, Edit, CheckCircle, XCircle, Clock3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 function UserProfile() {
@@ -310,98 +310,111 @@ function UserProfile() {
 
             {activeTab === "timeline" && (
               <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                <span className="inline-block w-2 h-6 bg-[#FFA725] rounded-full mr-3"></span>
-                Your Bookings
-              </h3>
-              
-              {bookings.length === 0 ? (
-                <div className="text-center py-16 bg-gray-50 rounded-xl border border-gray-100 shadow-inner">
-                  <div className="w-20 h-20 bg-[#FFA725] bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Calendar size={40} className="text-[#FFA725]" />
+                <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                  <span className="inline-block w-2 h-6 bg-[#FFA725] rounded-full mr-3"></span>
+                  Your Bookings
+                </h3>
+
+                {bookings.length === 0 ? (
+                  <div className="text-center py-16 bg-gray-50 rounded-xl border border-gray-100 shadow-inner">
+                    <div className="w-20 h-20 bg-[#FFA725] bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Calendar size={40} className="text-[#FFA725]" />
+                    </div>
+                    <p className="text-gray-700 font-medium mb-2">You have no bookings yet.</p>
+                    <p className="text-gray-500">Book an expert to see your bookings here</p>
+                    <button className="mt-6 px-6 py-2.5 bg-[#FFA725] text-white font-medium rounded-lg hover:bg-amber-600 transition duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                      Find an Expert
+                    </button>
                   </div>
-                  <p className="text-gray-700 font-medium mb-2">You have no bookings yet.</p>
-                  <p className="text-gray-500">Book an expert to see your bookings here</p>
-                  <button className="mt-6 px-6 py-2.5 bg-[#FFA725] text-white font-medium rounded-lg hover:bg-amber-600 transition duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-                    Find an Expert
-                  </button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {bookings.map((booking) => (
-                    <div key={booking._id} className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 border border-gray-100">
-                      <div className={`relative`}>
-                        {/* Status indicator bar */}
-                        <div className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-xl 
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {bookings.map((booking) => (
+                      <div key={booking._id} className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition duration-300 border border-gray-100">
+                        <div className={`relative`}>
+                          {/* Status indicator bar */}
+                          <div className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-xl 
                           ${booking.status === 'confirmed' ? 'bg-green-500' :
                           booking.status === 'canceled' ? 'bg-red-500' : 'bg-[#FFA725]'}"
-                        ></div>
-                        
-                        {/* Expert info header */}
-                        <div className="p-5 pl-6 border-b border-gray-100">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h4 className="font-bold text-gray-800">{booking.expertId?.userId?.fullName || "Expert"}</h4>
-                              <p className="text-sm text-gray-500 mt-1">{booking.expertId?.skills?.join(', ')}</p>
-                            </div>
-                            <span className={`px-3 py-1 text-xs rounded-full flex items-center font-medium
+                          ></div>
+
+                          {/* Expert info header */}
+                          <div className="p-5 pl-6 border-b border-gray-100">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h4 className="font-bold text-gray-800">{booking.expertId?.userId?.fullName || "Expert"}</h4>
+                                <p className="text-sm text-gray-500 mt-1">{booking.expertId?.skills?.join(', ')}</p>
+                              </div>
+                              <span className={`px-3 py-1 text-xs rounded-full flex items-center font-medium
                               ${booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
-                              booking.status === 'canceled' ? 'bg-red-100 text-red-700' :
-                              'bg-amber-200 bg-opacity-20 text-black'}`}
-                            >
-                              {getStatusIcon(booking.status)}
-                              <span className="ml-1">{booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}</span>
-                            </span>
-                          </div>
-                        </div>
-                        
-                        {/* Booking details */}
-                        <div className="p-5 pl-6">
-                          <div className="flex items-center text-sm mb-4 bg-gray-50 p-3 rounded-lg">
-                            <div className="flex items-center mr-4">
-                              <Calendar size={16} className="text-[#FFA725] mr-2" />
-                              <span className="text-gray-700">{new Date(booking.preferredDate).toLocaleDateString()}</span>
-                            </div>
-                            <div className="flex items-center">
-                              <Clock size={16} className="text-[#FFA725] mr-2" />
-                              <span className="text-gray-700">{booking.preferredTime}</span>
+                                  booking.status === 'canceled' ? 'bg-red-100 text-red-700' :
+                                    'bg-amber-200 bg-opacity-20 text-black'}`}
+                              >
+                                {getStatusIcon(booking.status)}
+                                <span className="ml-1">{booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}</span>
+                              </span>
                             </div>
                           </div>
-                          
-                          {booking.serviceDetails && (
-                            <div className="mb-4">
-                              <p className="text-gray-500 text-xs mb-1">Service Details</p>
-                              <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg border-l-2 border-[#FFA725]">
-                                {booking.serviceDetails}
-                              </p>
+
+                          {/* Booking details */}
+                          <div className="p-5 pl-6">
+                            <div className="flex items-center text-sm mb-4 bg-gray-50 p-3 rounded-lg">
+                              <div className="flex items-center mr-4">
+                                <Calendar size={16} className="text-[#FFA725] mr-2" />
+                                <span className="text-gray-700">{new Date(booking.preferredDate).toLocaleDateString()}</span>
+                              </div>
+                              <div className="flex items-center">
+                                <Clock size={16} className="text-[#FFA725] mr-2" />
+                                <span className="text-gray-700">{booking.preferredTime}</span>
+                              </div>
                             </div>
-                          )}
-                          
-                          {booking.bookingType && (
-                            <div className="mb-5">
-                              <p className="text-gray-500 text-xs mb-1">Booking Type</p>
-                              <p className="inline-block text-sm text-black bg-[#FFA725] bg-opacity-10 px-3 py-1 rounded-full">
-                                {booking.bookingType}
-                              </p>
+
+                            {booking.serviceDetails && (
+                              <div className="mb-4">
+                                <p className="text-gray-500 text-xs mb-1">Service Details</p>
+                                <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg border-l-2 border-[#FFA725]">
+                                  {booking.serviceDetails}
+                                </p>
+                              </div>
+                            )}
+
+                            {booking.bookingType && (
+                              <div className="mb-5">
+                                <p className="text-gray-500 text-xs mb-1">Booking Type</p>
+                                <p className="inline-block text-sm text-black bg-[#FFA725] bg-opacity-10 px-3 py-1 rounded-full">
+                                  {booking.bookingType}
+                                </p>
+                              </div>
+                            )}
+                            <div className="flex space-x-4">
+                              {booking.status === 'confirmed' && booking.bookingType === 'session' && (
+                                <button
+                                  onClick={() => navigate(`/videoChat`)} // Go to Video Call
+                                  className="w-full py-2.5 px-4 bg-[#FFA725] text-white rounded-lg hover:bg-amber-600 transition-all duration-300 flex items-center justify-center shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                                >
+                                  <Video size={16} className="mr-2" />
+                                  Start Video Call
+                                </button>
+                              )}
+
+                              {booking.status === 'confirmed' && (
+                                <button
+                                  onClick={() => fetchVoucher(booking._id)} // View Voucher
+                                  className="w-full py-2.5 px-4 bg-[#FFA725] text-white rounded-lg hover:bg-amber-600 transition-all duration-300 flex items-center justify-center shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                                >
+                                  <Star size={16} className="mr-2" />
+                                  View Voucher
+                                </button>
+                              )}
                             </div>
-                          )}
-                          
-                          {booking.status === 'confirmed' && (
-                            <button
-                              onClick={() => fetchVoucher(booking._id)}
-                              className="w-full py-2.5 px-4 bg-[#FFA725] text-white rounded-lg hover:bg-amber-600 transition-all duration-300 flex items-center justify-center shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-                            >
-                              <Star size={16} className="mr-2" />
-                              View Voucher
-                            </button>
-                          )}
+
+
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>
@@ -410,7 +423,7 @@ function UserProfile() {
       {/* Voucher Popup */}
       {showVoucherPopup && voucherData && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative border-2 border-[#FFA725]">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative border-2 border-[#FFA725]">
             <button
               onClick={() => setShowVoucherPopup(false)}
               className="absolute top-2 right-2 text-[#FFA725] hover:text-[#E08600] text-xl font-bold"

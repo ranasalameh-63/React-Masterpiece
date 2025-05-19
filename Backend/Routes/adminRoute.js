@@ -6,8 +6,8 @@ const { getAllUsers,
     getAdminStatistics,
     getPendingExperts,
     approveExpert,
+    rejectExpert,
     getAllBookings,
-    updateBookingStatus,
     exportBookingsToCSV,
     getAllPayments,
     getAllMessages,
@@ -20,6 +20,7 @@ router.get("/allUsers", getAllUsers);
 router.delete("/delete/:id", deleteUser);
 router.get("/pendingExperts", getPendingExperts);
 router.patch("/approveExpert/:userId", approveExpert);
+router.patch("/rejectExpert/:userId", rejectExpert);
 router.get('/allBookings', getAllBookings);
 router.get('/exportBookings', exportBookingsToCSV);
 router.get("/payments", getAllPayments);

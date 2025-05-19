@@ -20,8 +20,26 @@ const Hirepro = () => {
     navigate(`/booking/${expertId}`);
   };
 
+  const fetchExperts = async () => {
+    try {
+      const response = await axios.get('http://localhost:7000/api/expert/all', {
+        params: {
+          search: search,
+          page: page,
+          limit: 7,
+        },
+      });
 
-  const skills = ["Electrician", "Plumber", "Carpenter", "Painter"];
+      setExperts(response.data.data);
+      setTotalPages(response.data.totalPages);
+      setLoading(false);
+    } catch (error) {
+      setError("Error fetching data: " + error.message);
+      setLoading(false);
+    }
+  };
+
+
 
   useEffect(() => {
     const fetchExperts = async () => {
@@ -29,16 +47,15 @@ const Hirepro = () => {
         const response = await axios.get('http://localhost:7000/api/expert/all', {
           params: {
             search: search,
-            skills: selectedSkill,
             page: page,
-            limit: 12,
+            limit: 7,
           },
         });
 
         setExperts(response.data.data);
-        
+
         setTotalPages(response.data.totalPages);
-        setLoading(false);console.log(experts);
+        setLoading(false); console.log(experts);
       } catch (error) {
         setError("Error fetching data: " + error.message);
         setLoading(false);
@@ -90,7 +107,7 @@ const Hirepro = () => {
               </p>
 
               {/* Search and Filter Section */}
-              <div className="bg-white rounded-lg shadow-lg p-4 mb-8">
+              <div className="bg-white rounded-lg p-4 mb-8">
                 <div className="flex flex-col md:flex-row gap-3">
                   {/* Search Input */}
                   <div className="md:w-2/5">
@@ -101,22 +118,6 @@ const Hirepro = () => {
                       onChange={handleSearchChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA725] focus:border-transparent"
                     />
-                  </div>
-
-                  {/* Skill Filter */}
-                  <div className="md:w-2/5">
-                    <select
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#FFA725] focus:border-transparent"
-                      value={selectedSkill}
-                      onChange={handleFilterChange}
-                    >
-                      <option value="">Select a skill</option>
-                      {skills.map((skill) => (
-                        <option key={skill} value={skill}>
-                          {skill} expert
-                        </option>
-                      ))}
-                    </select>
                   </div>
 
                   <button
@@ -160,16 +161,20 @@ const Hirepro = () => {
                 className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
               >
                 <div className="p-6">
-                  <div className="w-16 h-16 rounded-full bg-[#FFA725] bg-opacity-20 flex items-center justify-center mb-4 mx-auto">
-                    <img
-                      src={
-                        expert.profileImage
-                          ? `http://localhost:7000${expert.profileImage}`
-                          : "/images/default-news.jpg"
-                      }
-                      alt="hello"
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="relative w-16 h-16 mx-auto mb-4">
+                    <div className="absolute inset-0 rounded-full bg-[#FFA725] bg-opacity-15 backdrop-blur-sm"></div>
+                    <div className="relative w-full h-full rounded-full overflow-hidden border border-[#FFA725]/30 shadow-lg hover:shadow-xl hover:shadow-[#FFA725]/20 transition-all duration-300">
+                      <img
+                        src={
+                          expert.profileImage
+                            ? `http://localhost:7000${expert.profileImage}`
+                            : "/images/default-news.jpg"
+                        }
+                        alt={expert.name || "Expert Profile"}
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0 ring-1 ring-inset ring-white/10 rounded-full"></div>
+                    </div>
                   </div>
                   <h3 className="text-xl font-bold text-gray-800 text-center mb-2">{expert.userId?.fullName}</h3>
                   <div className="flex items-center justify-center text-gray-600 mb-1">
@@ -184,7 +189,7 @@ const Hirepro = () => {
                   <div className="border-t border-gray-200 my-4"></div>
                   <div
                     onClick={() => {
-                      handleClick(expert._id );
+                      handleClick(expert._id);
                     }}
                     className="block w-full cursor-pointer text-center bg-white border-2 border-[#FFA725] text-[#FFA725] hover:bg-[#FFA725] hover:text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
                   >
@@ -198,16 +203,17 @@ const Hirepro = () => {
 
           {/* Pagination */}
           <div className="flex justify-center mt-8">
-            {Array.from({ length: totalPages }, (_, index) => (
-              <button
-                key={index}
-                onClick={() => handlePageChange(index + 1)}
-                className={`mx-2 px-4 py-2 cursor-pointer rounded-lg ${page === index + 1 ? "bg-[#FFA725] text-white" : "bg-[#FFA725] text-white"}`}
-              >
-                {index + 1}
-              </button>
-            ))}
-          </div>
+  {Array.from({ length: totalPages }, (_, index) => (
+    <button
+      key={index}
+      onClick={() => handlePageChange(index + 1)}
+      className={`mx-2 px-4 py-2 cursor-pointer rounded-lg ${page === index + 1 ? "bg-[#FFA725] text-white" : "bg-[#FFA725] text-white"}`}
+    >
+      {index + 1}
+    </button>
+  ))}
+</div>
+
         </div>
       </section>
     </div>

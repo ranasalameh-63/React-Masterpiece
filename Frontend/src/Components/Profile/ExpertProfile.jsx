@@ -29,7 +29,7 @@ function ExpertProfile() {
                 const response = await axios.get(`http://localhost:7000/api/profile/get/${id}`);
                 setExpertData(response.data.expertData);
                 setFormData(response.data.expertData);
-                setMessage("Profile updated successfully!");
+                // setMessage("Profile updated successfully!");
                 setTimeout(() => {
                     setMessage("");
                 }, 3000);

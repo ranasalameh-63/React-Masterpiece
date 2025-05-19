@@ -96,6 +96,8 @@ exports.getAllExperts = async (req, res) => {
       filter.location = { $regex: location, $options: "i" };
     }
 
+    const totalExperts = await Expert.countDocuments(filter);
+
     const experts = await Expert.find(filter)
       .populate({
         path: "userId",
@@ -108,8 +110,7 @@ exports.getAllExperts = async (req, res) => {
 
     const filteredExperts = experts.filter(expert => expert.userId);
 
-    const totalExperts = filteredExperts.length;
-    const totalPages = Math.ceil(totalExperts / limit);
+    const totalPages = Math.ceil(totalExperts / limit); 
 
     res.status(200).json({
       data: filteredExperts,
@@ -123,6 +124,7 @@ exports.getAllExperts = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 
 

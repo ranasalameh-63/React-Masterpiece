@@ -150,6 +150,25 @@ exports.approveExpert = async (req, res) => {
 };
 
 
+// Reject an expert
+exports.rejectExpert = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Optionally, we can remove the 'expert' role or any other rejection-related actions
+    user.role = "pending";  // Or any other status indicating rejection
+    await user.save();
+
+    res.status(200).json({ message: "Expert application rejected successfully." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong." });
+  }
+};
+
+
 
 exports.getAllBookings = async (req, res) => {
   try {
