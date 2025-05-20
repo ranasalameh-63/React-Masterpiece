@@ -10,6 +10,7 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [userData, setUserData] = useState(null);
+  const [expertData, setExpertData] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -37,6 +38,10 @@ const Navbar = () => {
         .catch((error) => console.error("Error fetching user data:", error));
     }
   }, [userId]);
+
+   
+
+  
   
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
@@ -53,7 +58,11 @@ const Navbar = () => {
     deleteCookie("token");
     dispatch(clearUserId());
     navigate("/");
+
   };
+
+
+  
 
   const defaultLinks = [
     { name: "Home", href: "/" },
@@ -85,6 +94,8 @@ const Navbar = () => {
   
   const navLinks = [...defaultLinks, ...roleBasedLinks];
   const isActive = (path) => location.pathname === path;
+
+  
 
   return (
     <nav className={`bg-white transition-all duration-300 ${scrolled ? 'py-2' : 'py-3'}`}>
@@ -124,7 +135,7 @@ const Navbar = () => {
               <div className="relative">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center space-x-2 text-[#FFA725] hover:text-black focus:outline-none"
+                  className="flex items-center space-x-2 text-[#FFA725] hover:text-black focus:outline-none cursor-pointer"
                 >
                   <User className="h-6 w-6" />
                   <span>{userData?.name || "Profile"}</span>

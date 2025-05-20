@@ -126,7 +126,7 @@ function UserProfile() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen py-8">
+    <div className="bg-gradient-to-br from-white to-orange-50 min-h-screen py-8">
       <div className="container mx-auto px-4 max-w-5xl">
         {message && (
           <div className="text-green-600 bg-green-100 p-3 rounded-md mb-4 text-sm border-l-4 border-green-500 flex items-center">

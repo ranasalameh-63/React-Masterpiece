@@ -92,20 +92,40 @@ exports.updateCurrentExpert = async (req, res) => {
 
 
 
+// exports.getExpertBookings = async (req, res) => {
+//   try {
+//     const expertId =req.params;  
+//     const id =expertId.id;
+//     const bookings = await Booking.find({ expertId:id }).populate("userId", "fullName email") 
+//           .sort({ preferredDate: -1 }); ;
+//     res.json(bookings);
+//     console.log(bookings);
+    
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Error fetching expert bookings" });
+//   }
+// };
+
 exports.getExpertBookings = async (req, res) => {
   try {
-    const expertId =req.params;  
-    const id =expertId.id;
-    const bookings = await Booking.find({ expertId:id }).populate("userId", "fullName email") 
-          .sort({ preferredDate: -1 }); ;
+    const { expertid } = req.params;  
+
+    const bookings = await Booking.find({ expertId:expertid })
+      .populate("userId", "fullName email")
+      .sort({ preferredDate: -1 })
+
+
+    if (!bookings || bookings.length === 0) {
+      return res.status(404).json({ message: "No bookings found for this expert" });
+    }
+
     res.json(bookings);
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching expert bookings:", error);
     res.status(500).json({ message: "Error fetching expert bookings" });
   }
 };
-
-
 
 
 

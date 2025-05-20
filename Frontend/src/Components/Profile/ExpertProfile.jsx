@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 function ExpertProfile() {
     const [expertData, setExpertData] = useState(null);
     const [loading, setLoading] = useState(true);
-    const { id } = useParams();
+    const { expertId } = useParams();
     const [activeTab, setActiveTab] = useState("about");
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({});
@@ -26,10 +26,9 @@ function ExpertProfile() {
     useEffect(() => {
         const fetchExpert = async () => {
             try {
-                const response = await axios.get(`http://localhost:7000/api/profile/get/${id}`);
+                const response = await axios.get(`http://localhost:7000/api/profile/get/${expertId}`);
                 setExpertData(response.data.expertData);
                 setFormData(response.data.expertData);
-                // setMessage("Profile updated successfully!");
                 setTimeout(() => {
                     setMessage("");
                 }, 3000);
@@ -45,7 +44,7 @@ function ExpertProfile() {
         };
 
         fetchExpert();
-    }, [id]);
+    }, [expertId]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -57,8 +56,10 @@ function ExpertProfile() {
 
     useEffect(() => {
         const fetchBookings = async () => {
+            const expertid = expertData.expertId;
+            
             try {
-                const response = await axios.get(`http://localhost:7000/api/profile/bookings/${id}`);
+                const response = await axios.get(`http://localhost:7000/api/profile/bookings/${expertid}`);
                 setBookings(response.data);
                 console.log(response.data);
             } catch (error) {
@@ -69,8 +70,10 @@ function ExpertProfile() {
         };
 
         fetchBookings();
-    }, [id]);
+    }, [expertData]);
 
+    console.log("bookingsssssssssssssss"+ bookings);
+    
     const handleUpdate = async () => {
         try {
             const dataToSend = new FormData();
@@ -86,11 +89,11 @@ function ExpertProfile() {
                 dataToSend.append("profileImage", formData.profileImage);
             }
 
-            await axios.put(`http://localhost:7000/api/profile/update/${id}`, dataToSend, {
+            await axios.put(`http://localhost:7000/api/profile/update/${expertId}`, dataToSend, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
-            const response = await axios.get(`http://localhost:7000/api/profile/get/${id}`);
+            const response = await axios.get(`http://localhost:7000/api/profile/get/${expertId}`);
             setExpertData(response.data.expertData);
             setFormData(response.data.expertData);
 
