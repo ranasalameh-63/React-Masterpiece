@@ -123,8 +123,8 @@ exports.deleteUser = async (req, res) => {
 exports.getPendingExperts = async (req, res) => {
   try {
     const experts = await Expert.find().populate('userId', 'fullName email role');
-    const pending = experts.filter((expert) => expert.userId.role === "user");
-
+    const pending = experts.filter((expert) => expert.userId?.role === "user");
+    
     res.status(200).json(pending);
   } catch (error) {
     console.error(error);
@@ -157,8 +157,7 @@ exports.rejectExpert = async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Optionally, we can remove the 'expert' role or any other rejection-related actions
-    user.role = "pending";  // Or any other status indicating rejection
+    user.role = "pending"; 
     await user.save();
 
     res.status(200).json({ message: "Expert application rejected successfully." });
